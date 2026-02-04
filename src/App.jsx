@@ -23,6 +23,7 @@ import BulkLogPage from './components/BulkLog/BulkLogPage';
 import HistoryPage from './components/History/HistoryPage';
 import InstallPrompt from './components/shared/InstallPrompt';
 import OnboardingWizard from './components/Onboarding/OnboardingWizard';
+import TutorialOverlay from './components/Onboarding/TutorialOverlay';
 import MilestonesPage from './components/Milestones/MilestonesPage';
 import DoctorVisitPage from './components/DoctorVisit/DoctorVisitPage';
 import ShareModal from './components/Share/ShareModal';
@@ -52,6 +53,13 @@ const BabyRhythm = () => {
   const [showBackupModal, setShowBackupModal] = useState(false);
   const googleDrive = useGoogleDrive();
 
+  // Tutorial state
+  const [showTutorial, setShowTutorial] = useState(() => {
+    try {
+      return localStorage.getItem('babyRhythm_tutorialShown') !== 'true';
+    } catch { return true; }
+  });
+
   const {
     babyProfile,
     editingProfile,
@@ -66,8 +74,23 @@ const BabyRhythm = () => {
     updateWeightEntry,
     updateEditingProfile,
     completeOnboarding,
-    resetAllData
+    resetAllData,
+    loadDemoData
   } = useProfile();
+
+  // Tutorial completion handler
+  const handleTutorialComplete = () => {
+    setShowTutorial(false);
+    try {
+      localStorage.setItem('babyRhythm_tutorialShown', 'true');
+    } catch {}
+  };
+
+  // Demo data loading handler
+  const handleLoadDemo = (demoData) => {
+    loadDemoData(demoData);
+    setShowTutorial(true); // Show tutorial after loading demo
+  };
 
   // State for all parameters - load from localStorage
   const [savedSettings] = useState(() => {
@@ -303,9 +326,14 @@ const BabyRhythm = () => {
 
   // Show onboarding if not complete (AFTER all hooks)
   if (!onboardingComplete || !babyProfile) {
-    return <OnboardingWizard onComplete={completeOnboarding} />;
+    return <OnboardingWizard onComplete={completeOnboarding} onLoadDemo={handleLoadDemo} />;
   }
 
+
+  // Show tutorial from profile page
+  const handleShowTutorialFromProfile = () => {
+    setShowTutorial(true);
+  };
 
   // Render Profile Page
   const renderProfilePage = () => {
@@ -322,6 +350,8 @@ const BabyRhythm = () => {
         removeWeightEntry={removeWeightEntry}
         updateWeightEntry={updateWeightEntry}
         updateEditingProfile={updateEditingProfile}
+        resetAllData={resetAllData}
+        showTutorial={handleShowTutorialFromProfile}
       />
     );
   };
@@ -641,6 +671,14 @@ const exportData = () => {
         onBackup={handleGoogleDriveBackup}
         onRestore={handleGoogleDriveRestore}
       />
+
+      {/* Tutorial Overlay */}
+      {showTutorial && (
+        <TutorialOverlay
+          onComplete={handleTutorialComplete}
+          onSkip={handleTutorialComplete}
+        />
+      )}
     </div>
   );
 };

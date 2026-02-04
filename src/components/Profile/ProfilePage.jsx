@@ -1,5 +1,5 @@
-import React from 'react';
-import { User, Calendar, Save, X, Plus, Trash2, Download, Globe } from 'lucide-react';
+import React, { useState } from 'react';
+import { User, Calendar, Save, X, Plus, Trash2, Download, Globe, AlertTriangle, RefreshCw, HelpCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { calculateAge } from '../../utils/dateHelpers';
 import { exportWeightHistoryToCSV } from '../../utils/csvExportHelpers';
@@ -15,8 +15,16 @@ const ProfilePage = ({
   addWeightEntry,
   removeWeightEntry,
   updateWeightEntry,
-  updateEditingProfile
+  updateEditingProfile,
+  resetAllData,
+  showTutorial
 }) => {
+  // Check if in demo mode
+  const isDemo = (() => {
+    try {
+      return localStorage.getItem('babyRhythm_isDemo') === 'true';
+    } catch { return false; }
+  })();
   const { t, i18n } = useTranslation();
   const profile = editingProfile || babyProfile;
   const isEditing = editingProfile !== null;
@@ -359,6 +367,60 @@ const ProfilePage = ({
               </button>
             </div>
           </div>
+
+          {/* Show Tutorial Again */}
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              Help
+            </label>
+            <button
+              onClick={showTutorial}
+              className="flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-gray-300 rounded-lg transition-colors"
+            >
+              <HelpCircle className="w-4 h-4" />
+              Show Tutorial
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Data Management */}
+      <div className="bg-gray-800 rounded-lg p-6 mt-6">
+        <h3 className="text-xl font-semibold text-red-400 mb-4 flex items-center gap-2">
+          <AlertTriangle className="w-5 h-5" />
+          Data Management
+        </h3>
+
+        {isDemo && (
+          <div className="bg-yellow-500/20 border border-yellow-500/30 rounded-lg p-4 mb-4">
+            <div className="flex items-start gap-3">
+              <span className="text-2xl">🎮</span>
+              <div>
+                <div className="text-yellow-200 font-medium">Demo Mode Active</div>
+                <div className="text-yellow-200/70 text-sm mt-1">
+                  You're viewing sample data. Reset to start tracking your own baby.
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        <div className="space-y-3">
+          <p className="text-gray-400 text-sm">
+            Reset all data to start fresh. This will delete all logged events, profile information, and settings.
+          </p>
+
+          <button
+            onClick={resetAllData}
+            className="flex items-center gap-2 px-4 py-3 bg-red-600 hover:bg-red-500 text-white rounded-lg font-medium transition-colors"
+          >
+            <RefreshCw className="w-4 h-4" />
+            {isDemo ? 'Exit Demo & Start Fresh' : 'Reset All Data'}
+          </button>
+
+          <p className="text-gray-500 text-xs">
+            This action cannot be undone. Consider exporting your data first.
+          </p>
         </div>
       </div>
     </div>

@@ -92,6 +92,31 @@ export const useProfile = () => {
     return true;
   };
 
+  // Load demo data (profile, schedules, milestones)
+  const loadDemoData = (demoData) => {
+    const { profile, dailySchedules, milestones } = demoData;
+
+    // Save profile
+    setBabyProfile(profile);
+    setOnboardingComplete(true);
+    try {
+      localStorage.setItem('babyRhythm_babyProfile', JSON.stringify(profile));
+      localStorage.setItem('babyRhythm_onboardingComplete', 'true');
+
+      // Save schedules
+      localStorage.setItem('babyRhythm_dailySchedules', JSON.stringify(dailySchedules));
+
+      // Save milestones
+      localStorage.setItem('babyRhythm_milestones', JSON.stringify(milestones));
+
+      // Mark as demo mode
+      localStorage.setItem('babyRhythm_isDemo', 'true');
+    } catch {}
+
+    // Reload to apply schedules
+    window.location.reload();
+  };
+
   const addWeightEntry = () => {
     if (!editingProfile) return;
 
@@ -149,6 +174,7 @@ export const useProfile = () => {
     updateWeightEntry,
     updateEditingProfile,
     completeOnboarding,
-    resetAllData
+    resetAllData,
+    loadDemoData
   };
 };

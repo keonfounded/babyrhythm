@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Baby, Calendar, Scale, Heart, ArrowRight, Check } from 'lucide-react';
+import { Baby, Calendar, Scale, Heart, ArrowRight, Check, Play, Sparkles } from 'lucide-react';
 import { getDateKey } from '../../utils/dateHelpers';
+import { generateDemoData } from '../../data/demoData';
 
-const OnboardingWizard = ({ onComplete }) => {
+const OnboardingWizard = ({ onComplete, onLoadDemo }) => {
   const [step, setStep] = useState(0);
   const [profile, setProfile] = useState({
     name: '',
@@ -45,6 +46,11 @@ const OnboardingWizard = ({ onComplete }) => {
     onComplete(finalProfile);
   };
 
+  const handleLoadDemo = () => {
+    const demoData = generateDemoData();
+    onLoadDemo(demoData);
+  };
+
   const canProceed = () => {
     switch (step) {
       case 0: return true;
@@ -79,27 +85,52 @@ const OnboardingWizard = ({ onComplete }) => {
                 <Baby className="w-10 h-10 text-white" />
               </div>
               <h1 className="text-3xl font-bold text-white mb-3">BabyRhythm</h1>
-              <p className="text-gray-400 mb-8">
+              <p className="text-gray-400 mb-6">
                 Track, predict, and sync your baby's sleep and feeding patterns.
               </p>
+
+              {/* Feature list */}
               <div className="space-y-3 text-left text-sm text-gray-300 mb-8">
                 <div className="flex items-center gap-3">
-                  <Check className="w-5 h-5 text-teal-500" />
+                  <Check className="w-5 h-5 text-teal-500 flex-shrink-0" />
                   <span>Predict next nap & feed times</span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <Check className="w-5 h-5 text-teal-500" />
+                  <Check className="w-5 h-5 text-teal-500 flex-shrink-0" />
                   <span>Learn your baby's unique rhythm</span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <Check className="w-5 h-5 text-teal-500" />
-                  <span>Quick one-tap logging</span>
+                  <Check className="w-5 h-5 text-teal-500 flex-shrink-0" />
+                  <span>Track growth, milestones & more</span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <Check className="w-5 h-5 text-teal-500" />
-                  <span>Works offline</span>
+                  <Check className="w-5 h-5 text-teal-500 flex-shrink-0" />
+                  <span>Works offline, data stays private</span>
                 </div>
               </div>
+
+              {/* Action buttons */}
+              <div className="space-y-3">
+                <button
+                  onClick={handleNext}
+                  className="w-full py-4 bg-teal-600 hover:bg-teal-500 text-white rounded-xl font-semibold flex items-center justify-center gap-2 transition-colors"
+                >
+                  <Sparkles className="w-5 h-5" />
+                  Start Fresh
+                </button>
+
+                <button
+                  onClick={handleLoadDemo}
+                  className="w-full py-4 bg-gray-700 hover:bg-gray-600 text-white rounded-xl font-semibold flex items-center justify-center gap-2 transition-colors"
+                >
+                  <Play className="w-5 h-5" />
+                  Try Demo First
+                </button>
+              </div>
+
+              <p className="text-xs text-gray-500 mt-4">
+                Demo shows sample data for a 1-year-old baby
+              </p>
             </div>
           )}
 
@@ -164,6 +195,27 @@ const OnboardingWizard = ({ onComplete }) => {
                   </div>
                 </div>
               </div>
+
+              {/* Navigation */}
+              <button
+                onClick={handleNext}
+                disabled={!canProceed()}
+                className={`w-full mt-8 py-4 rounded-xl font-semibold flex items-center justify-center gap-2 transition-colors ${
+                  canProceed()
+                    ? 'bg-teal-600 hover:bg-teal-700 text-white'
+                    : 'bg-gray-700 text-gray-500 cursor-not-allowed'
+                }`}
+              >
+                Continue
+                <ArrowRight className="w-5 h-5" />
+              </button>
+
+              <button
+                onClick={() => setStep(0)}
+                className="w-full mt-3 py-2 text-gray-400 hover:text-gray-300 text-sm"
+              >
+                Back
+              </button>
             </div>
           )}
 
@@ -190,14 +242,14 @@ const OnboardingWizard = ({ onComplete }) => {
                       Kilograms (kg)
                     </button>
                     <button
-                      onClick={() => setProfile({ ...profile, weightUnit: 'lb' })}
+                      onClick={() => setProfile({ ...profile, weightUnit: 'lbs' })}
                       className={`flex-1 py-3 rounded-lg font-medium transition-colors ${
-                        profile.weightUnit === 'lb'
+                        profile.weightUnit === 'lbs'
                           ? 'bg-teal-600 text-white'
                           : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
                       }`}
                     >
-                      Pounds (lb)
+                      Pounds (lbs)
                     </button>
                   </div>
                 </div>
@@ -216,6 +268,22 @@ const OnboardingWizard = ({ onComplete }) => {
                   />
                 </div>
               </div>
+
+              {/* Navigation */}
+              <button
+                onClick={handleNext}
+                className="w-full mt-8 py-4 bg-teal-600 hover:bg-teal-700 text-white rounded-xl font-semibold flex items-center justify-center gap-2 transition-colors"
+              >
+                Continue
+                <ArrowRight className="w-5 h-5" />
+              </button>
+
+              <button
+                onClick={() => setStep(1)}
+                className="w-full mt-3 py-2 text-gray-400 hover:text-gray-300 text-sm"
+              >
+                Back
+              </button>
             </div>
           )}
 
@@ -248,40 +316,23 @@ const OnboardingWizard = ({ onComplete }) => {
                   </button>
                 ))}
               </div>
-            </div>
-          )}
 
-          {/* Action Button */}
-          <button
-            onClick={handleNext}
-            disabled={!canProceed()}
-            className={`w-full mt-8 py-4 rounded-xl font-semibold flex items-center justify-center gap-2 transition-colors ${
-              canProceed()
-                ? 'bg-teal-600 hover:bg-teal-700 text-white'
-                : 'bg-gray-700 text-gray-500 cursor-not-allowed'
-            }`}
-          >
-            {step === steps.length - 1 ? (
-              <>
+              {/* Navigation */}
+              <button
+                onClick={handleComplete}
+                className="w-full mt-8 py-4 bg-teal-600 hover:bg-teal-700 text-white rounded-xl font-semibold flex items-center justify-center gap-2 transition-colors"
+              >
                 Get Started
                 <Check className="w-5 h-5" />
-              </>
-            ) : (
-              <>
-                Continue
-                <ArrowRight className="w-5 h-5" />
-              </>
-            )}
-          </button>
+              </button>
 
-          {/* Skip for optional steps */}
-          {step === 2 && (
-            <button
-              onClick={handleNext}
-              className="w-full mt-3 py-2 text-gray-400 hover:text-gray-300 text-sm"
-            >
-              Skip for now
-            </button>
+              <button
+                onClick={() => setStep(2)}
+                className="w-full mt-3 py-2 text-gray-400 hover:text-gray-300 text-sm"
+              >
+                Back
+              </button>
+            </div>
           )}
         </div>
 
