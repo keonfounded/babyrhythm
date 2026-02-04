@@ -35,13 +35,13 @@ const NapPredictor = ({ birthDate, dailySchedules }) => {
     wakeStatus = 'Watch';
   }
 
-  // Format wake window for display
+  // Format wake window for display - use clear labels
   const formatWakeTime = (hours) => {
     const h = Math.floor(hours);
     const m = Math.round((hours % 1) * 60);
-    if (h === 0) return `${m}m`;
-    if (m === 0) return `${h}h`;
-    return `${h}h ${m}m`;
+    if (h === 0) return `${m} min`;
+    if (m === 0) return `${h} hr`;
+    return `${h} hr ${m} min`;
   };
 
   return (
@@ -90,10 +90,10 @@ const NapPredictor = ({ birthDate, dailySchedules }) => {
 
         {predicted && !isPast && minutesFromNow !== null && minutesFromNow > 0 && (
           <div className="text-right flex-shrink-0">
+            <div className="text-[10px] md:text-xs text-gray-400">in</div>
             <div className={`text-2xl md:text-3xl font-bold ${urgencyText}`}>
-              {minutesFromNow}
+              {minutesFromNow} <span className="text-base">min</span>
             </div>
-            <div className="text-[10px] md:text-xs text-gray-400">min</div>
           </div>
         )}
       </div>
