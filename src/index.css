@@ -1,5 +1,93 @@
 @import "tailwindcss";
 
+/* Theme Variables */
+:root {
+  --bg-primary: #111827;
+  --bg-secondary: #1f2937;
+  --bg-tertiary: #374151;
+  --text-primary: #f3f4f6;
+  --text-secondary: #9ca3af;
+  --text-muted: #6b7280;
+  --border-color: #374151;
+  --accent-teal: #14b8a6;
+}
+
+.light-theme {
+  --bg-primary: #f9fafb;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #f3f4f6;
+  --text-primary: #111827;
+  --text-secondary: #4b5563;
+  --text-muted: #9ca3af;
+  --border-color: #e5e7eb;
+  --accent-teal: #0d9488;
+}
+
+/* Apply theme colors */
+.light-theme {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.light-theme .bg-gray-900 {
+  background-color: var(--bg-primary) !important;
+}
+
+.light-theme .bg-gray-800 {
+  background-color: var(--bg-secondary) !important;
+  border: 1px solid var(--border-color);
+}
+
+.light-theme .bg-gray-700 {
+  background-color: var(--bg-tertiary) !important;
+}
+
+.light-theme .text-gray-100,
+.light-theme .text-white {
+  color: var(--text-primary) !important;
+}
+
+.light-theme .text-gray-300,
+.light-theme .text-gray-400 {
+  color: var(--text-secondary) !important;
+}
+
+.light-theme .text-gray-500,
+.light-theme .text-gray-600 {
+  color: var(--text-muted) !important;
+}
+
+.light-theme .border-gray-700,
+.light-theme .border-gray-800 {
+  border-color: var(--border-color) !important;
+}
+
+.light-theme input,
+.light-theme select,
+.light-theme textarea {
+  background-color: var(--bg-tertiary) !important;
+  border-color: var(--border-color) !important;
+  color: var(--text-primary) !important;
+}
+
+.light-theme input::placeholder,
+.light-theme textarea::placeholder {
+  color: var(--text-muted) !important;
+}
+
+/* Scrollbar for light theme */
+.light-theme ::-webkit-scrollbar-track {
+  background: #f3f4f6;
+}
+
+.light-theme ::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+}
+
+.light-theme ::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
 /* Safe area padding for notched devices (iPhone X+) */
 .safe-area-pb {
   padding-bottom: env(safe-area-inset-bottom, 0);

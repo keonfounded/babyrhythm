@@ -21,7 +21,7 @@ export const useEventLogging = (getScheduleForDate, updateScheduleForDate) => {
     }
   }, [lastAction]);
 
-  const logEvent = (dateKey, eventType, customTime = null, amount = null, diaperType = null) => {
+  const logEvent = (dateKey, eventType, customTime = null, amount = null, diaperType = null, note = '') => {
     const now = new Date();
     const timeInHours = customTime !== null ? customTime : getCurrentTimeInHours();
 
@@ -37,7 +37,7 @@ export const useEventLogging = (getScheduleForDate, updateScheduleForDate) => {
       endTime: null,
       timestamp: now.toISOString(),
       metadata: {},
-      note: '',
+      note: note || '',
       amount: amount,
       diaperType: diaperType
     };
@@ -90,9 +90,9 @@ export const useEventLogging = (getScheduleForDate, updateScheduleForDate) => {
     setActiveSleepSession(null);
   };
 
-  const logEventNow = (eventType, amount = null, diaperType = null) => {
+  const logEventNow = (eventType, amount = null, diaperType = null, note = '') => {
     const dateKey = getCurrentDateKey();
-    logEvent(dateKey, eventType, null, amount, diaperType);
+    logEvent(dateKey, eventType, null, amount, diaperType, note);
   };
 
   const deleteLoggedEvent = (dateKey, eventId) => {
@@ -181,6 +181,8 @@ function getUndoLabel(action) {
     feed: 'Feed',
     sleep: 'Sleep',
     diaper: 'Diaper',
+    pump: 'Pump',
+    medication: 'Med',
     note: 'Note'
   };
 

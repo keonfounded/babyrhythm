@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Clock, X, Undo2 } from 'lucide-react';
+import { Clock, X, Undo2, MoreHorizontal } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { formatTime, getCurrentTimeInHours } from '../../utils/timeHelpers';
 
@@ -18,12 +18,42 @@ const QuickLogToolbar = ({
   const [showFeedAmount, setShowFeedAmount] = useState(false);
   const [feedAmount, setFeedAmount] = useState('');
   const [showDiaperType, setShowDiaperType] = useState(false);
+  const [showPumpForm, setShowPumpForm] = useState(false);
+  const [pumpAmount, setPumpAmount] = useState('');
+  const [pumpSide, setPumpSide] = useState('both');
+  const [showMedForm, setShowMedForm] = useState(false);
+  const [medName, setMedName] = useState('');
+  const [medDosage, setMedDosage] = useState('');
+  const [showMoreMenu, setShowMoreMenu] = useState(false);
 
   const handleFeedNow = () => {
     const amount = feedAmount ? parseFloat(feedAmount) : null;
     logEventNow('feed', amount);
     setFeedAmount('');
     setShowFeedAmount(false);
+  };
+
+  const handlePumpNow = () => {
+    const amount = pumpAmount ? parseFloat(pumpAmount) : null;
+    logEventNow('pump', amount, pumpSide);
+    setPumpAmount('');
+    setPumpSide('both');
+    setShowPumpForm(false);
+  };
+
+  const handleMedNow = () => {
+    logEventNow('medication', null, null, `${medName}${medDosage ? ` - ${medDosage}` : ''}`);
+    setMedName('');
+    setMedDosage('');
+    setShowMedForm(false);
+  };
+
+  const closeAllForms = () => {
+    setShowFeedAmount(false);
+    setShowDiaperType(false);
+    setShowPumpForm(false);
+    setShowMedForm(false);
+    setShowMoreMenu(false);
   };
 
   // Mobile quick action buttons
@@ -151,11 +181,103 @@ const QuickLogToolbar = ({
                 💩 Diaper Now
               </button>
             )}
+            {/* Pump */}
+            {showPumpForm ? (
+              <div className="flex gap-2 items-center bg-purple-600/20 px-3 py-2 rounded border border-purple-600">
+                <input
+                  type="number"
+                  step="0.5"
+                  placeholder="Amount"
+                  value={pumpAmount}
+                  onChange={(e) => setPumpAmount(e.target.value)}
+                  className="w-20 bg-gray-700 border border-gray-600 rounded px-2 py-1 text-white text-sm"
+                  autoFocus
+                />
+                <select
+                  value={feedAmountUnit}
+                  onChange={(e) => setFeedAmountUnit(e.target.value)}
+                  className="bg-gray-700 border border-gray-600 rounded px-2 py-1 text-white text-sm"
+                >
+                  <option value="oz">oz</option>
+                  <option value="ml">ml</option>
+                </select>
+                <select
+                  value={pumpSide}
+                  onChange={(e) => setPumpSide(e.target.value)}
+                  className="bg-gray-700 border border-gray-600 rounded px-2 py-1 text-white text-sm"
+                >
+                  <option value="left">Left</option>
+                  <option value="right">Right</option>
+                  <option value="both">Both</option>
+                </select>
+                <button
+                  onClick={handlePumpNow}
+                  className="px-3 py-1 bg-purple-600 hover:bg-purple-700 text-white rounded text-sm font-semibold"
+                >
+                  Log
+                </button>
+                <button
+                  onClick={() => { setShowPumpForm(false); setPumpAmount(''); }}
+                  className="px-3 py-1 bg-gray-600 hover:bg-gray-700 text-white rounded text-sm"
+                >
+                  Cancel
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => setShowPumpForm(true)}
+                className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded flex items-center gap-2"
+              >
+                🧴 Pump
+              </button>
+            )}
+
+            {/* Medication */}
+            {showMedForm ? (
+              <div className="flex gap-2 items-center bg-red-600/20 px-3 py-2 rounded border border-red-600">
+                <input
+                  type="text"
+                  placeholder="Med name"
+                  value={medName}
+                  onChange={(e) => setMedName(e.target.value)}
+                  className="w-28 bg-gray-700 border border-gray-600 rounded px-2 py-1 text-white text-sm"
+                  autoFocus
+                />
+                <input
+                  type="text"
+                  placeholder="Dosage"
+                  value={medDosage}
+                  onChange={(e) => setMedDosage(e.target.value)}
+                  className="w-20 bg-gray-700 border border-gray-600 rounded px-2 py-1 text-white text-sm"
+                />
+                <button
+                  onClick={handleMedNow}
+                  disabled={!medName.trim()}
+                  className="px-3 py-1 bg-red-600 hover:bg-red-700 text-white rounded text-sm font-semibold disabled:opacity-50"
+                >
+                  Log
+                </button>
+                <button
+                  onClick={() => { setShowMedForm(false); setMedName(''); setMedDosage(''); }}
+                  className="px-3 py-1 bg-gray-600 hover:bg-gray-700 text-white rounded text-sm"
+                >
+                  Cancel
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => setShowMedForm(true)}
+                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded flex items-center gap-2"
+              >
+                💊 Med
+              </button>
+            )}
+
             <button
               onClick={() => logEventNow('note')}
               className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded flex items-center gap-2"
             >
-              📝 Note Now
+              📝 Note
             </button>
             {canUndo && (
               <button
@@ -254,9 +376,144 @@ const QuickLogToolbar = ({
           </div>
         )}
 
+        {showPumpForm && (
+          <div className="p-4 bg-gray-800 border-b border-gray-700">
+            <div className="flex items-center gap-2 mb-3">
+              <span className="text-purple-400 text-lg">🧴</span>
+              <span className="text-white font-medium">Log Pump</span>
+              <button
+                onClick={() => { setShowPumpForm(false); setPumpAmount(''); }}
+                className="ml-auto p-1 text-gray-400"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="flex gap-2 mb-3">
+              <button
+                onClick={() => setPumpSide('left')}
+                className={`flex-1 py-3 rounded-xl font-medium ${pumpSide === 'left' ? 'bg-purple-600 text-white' : 'bg-gray-700 text-gray-300'}`}
+              >
+                Left
+              </button>
+              <button
+                onClick={() => setPumpSide('right')}
+                className={`flex-1 py-3 rounded-xl font-medium ${pumpSide === 'right' ? 'bg-purple-600 text-white' : 'bg-gray-700 text-gray-300'}`}
+              >
+                Right
+              </button>
+              <button
+                onClick={() => setPumpSide('both')}
+                className={`flex-1 py-3 rounded-xl font-medium ${pumpSide === 'both' ? 'bg-purple-600 text-white' : 'bg-gray-700 text-gray-300'}`}
+              >
+                Both
+              </button>
+            </div>
+            <div className="flex gap-2">
+              <input
+                type="number"
+                step="0.5"
+                inputMode="decimal"
+                placeholder="Amount (optional)"
+                value={pumpAmount}
+                onChange={(e) => setPumpAmount(e.target.value)}
+                className="flex-1 bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white text-lg"
+                autoFocus
+              />
+              <select
+                value={feedAmountUnit}
+                onChange={(e) => setFeedAmountUnit(e.target.value)}
+                className="bg-gray-700 border border-gray-600 rounded-lg px-3 py-3 text-white"
+              >
+                <option value="oz">oz</option>
+                <option value="ml">ml</option>
+              </select>
+              <button
+                onClick={handlePumpNow}
+                className="px-6 py-3 bg-purple-600 text-white rounded-lg font-semibold"
+              >
+                Log
+              </button>
+            </div>
+          </div>
+        )}
+
+        {showMedForm && (
+          <div className="p-4 bg-gray-800 border-b border-gray-700">
+            <div className="flex items-center gap-2 mb-3">
+              <span className="text-red-400 text-lg">💊</span>
+              <span className="text-white font-medium">Log Medication</span>
+              <button
+                onClick={() => { setShowMedForm(false); setMedName(''); setMedDosage(''); }}
+                className="ml-auto p-1 text-gray-400"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                placeholder="Medication name"
+                value={medName}
+                onChange={(e) => setMedName(e.target.value)}
+                className="flex-1 bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white text-lg"
+                autoFocus
+              />
+              <input
+                type="text"
+                placeholder="Dosage"
+                value={medDosage}
+                onChange={(e) => setMedDosage(e.target.value)}
+                className="w-24 bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white text-lg"
+              />
+              <button
+                onClick={handleMedNow}
+                disabled={!medName.trim()}
+                className="px-6 py-3 bg-red-600 text-white rounded-lg font-semibold disabled:opacity-50"
+              >
+                Log
+              </button>
+            </div>
+          </div>
+        )}
+
+        {showMoreMenu && (
+          <div className="p-4 bg-gray-800 border-b border-gray-700">
+            <div className="flex items-center gap-2 mb-3">
+              <span className="text-gray-400 text-lg">➕</span>
+              <span className="text-white font-medium">More Actions</span>
+              <button
+                onClick={() => setShowMoreMenu(false)}
+                className="ml-auto p-1 text-gray-400"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="grid grid-cols-3 gap-2">
+              <button
+                onClick={() => { setShowMoreMenu(false); setShowPumpForm(true); }}
+                className="py-4 bg-purple-600 text-white rounded-xl font-medium"
+              >
+                🧴 Pump
+              </button>
+              <button
+                onClick={() => { setShowMoreMenu(false); setShowMedForm(true); }}
+                className="py-4 bg-red-600 text-white rounded-xl font-medium"
+              >
+                💊 Med
+              </button>
+              <button
+                onClick={() => { logEventNow('note'); setShowMoreMenu(false); }}
+                className="py-4 bg-gray-600 text-white rounded-xl font-medium"
+              >
+                📝 Note
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Main quick action buttons */}
         <div className="p-3 flex gap-2">
-          {!showFeedAmount && !showDiaperType && (
+          {!showFeedAmount && !showDiaperType && !showPumpForm && !showMedForm && !showMoreMenu && (
             <>
               <QuickButton
                 onClick={() => setShowFeedAmount(true)}
@@ -303,10 +560,10 @@ const QuickLogToolbar = ({
                 </QuickButton>
               ) : (
                 <QuickButton
-                  onClick={() => logEventNow('note')}
+                  onClick={() => setShowMoreMenu(true)}
                   className="bg-gray-700 text-white"
                 >
-                  <span className="text-xl">📝</span>
+                  <MoreHorizontal className="w-5 h-5" />
                 </QuickButton>
               )}
             </>
@@ -314,7 +571,7 @@ const QuickLogToolbar = ({
         </div>
 
         {/* Undo available indicator */}
-        {canUndo && !showFeedAmount && !showDiaperType && (
+        {canUndo && !showFeedAmount && !showDiaperType && !showPumpForm && !showMedForm && !showMoreMenu && (
           <div className="px-3 pb-2 -mt-1">
             <div className="text-xs text-center text-orange-400 bg-orange-900/30 rounded-lg py-2">
               {undoLabel} available (30s)
@@ -323,7 +580,7 @@ const QuickLogToolbar = ({
         )}
 
         {/* Active sleep indicator */}
-        {activeSleepSession && !canUndo && !showFeedAmount && !showDiaperType && (
+        {activeSleepSession && !canUndo && !showFeedAmount && !showDiaperType && !showPumpForm && !showMedForm && !showMoreMenu && (
           <div className="px-3 pb-3 -mt-1">
             <div className="text-xs text-center text-indigo-400 bg-indigo-900/30 rounded-lg py-2">
               ⏱️ Sleep in progress...

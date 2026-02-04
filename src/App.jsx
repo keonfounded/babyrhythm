@@ -31,6 +31,7 @@ import ImportModal from './components/Share/ImportModal';
 import BackupModal from './components/Backup/BackupModal';
 import { getShareDataFromUrl, clearShareFromUrl, mergeSchedules } from './utils/shareHelpers';
 import { useGoogleDrive } from './hooks/useGoogleDrive';
+import { useTheme } from './hooks/useTheme';
 
 // Run storage migration on load
 migrateStorage();
@@ -52,6 +53,9 @@ const BabyRhythm = () => {
   // Backup modal state
   const [showBackupModal, setShowBackupModal] = useState(false);
   const googleDrive = useGoogleDrive();
+
+  // Theme
+  const { theme, toggleTheme } = useTheme();
 
   // Tutorial state
   const [showTutorial, setShowTutorial] = useState(() => {
@@ -371,6 +375,8 @@ const BabyRhythm = () => {
         updateEditingProfile={updateEditingProfile}
         resetAllData={resetAllData}
         showTutorial={handleShowTutorialFromProfile}
+        theme={theme}
+        toggleTheme={toggleTheme}
       />
     );
   };

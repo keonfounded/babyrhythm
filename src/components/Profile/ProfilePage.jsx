@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { User, Calendar, Save, X, Plus, Trash2, Download, Globe, AlertTriangle, RefreshCw, HelpCircle } from 'lucide-react';
+import { User, Calendar, Save, X, Plus, Trash2, Download, Globe, AlertTriangle, RefreshCw, HelpCircle, Sun, Moon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { calculateAge } from '../../utils/dateHelpers';
 import { exportWeightHistoryToCSV } from '../../utils/csvExportHelpers';
@@ -17,7 +17,9 @@ const ProfilePage = ({
   updateWeightEntry,
   updateEditingProfile,
   resetAllData,
-  showTutorial
+  showTutorial,
+  theme,
+  toggleTheme
 }) => {
   // Check if in demo mode
   const isDemo = (() => {
@@ -364,6 +366,37 @@ const ProfilePage = ({
                 }`}
               >
                 🇰🇷 한국어
+              </button>
+            </div>
+          </div>
+
+          {/* Theme Toggle */}
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              Theme
+            </label>
+            <div className="flex gap-2">
+              <button
+                onClick={() => theme !== 'dark' && toggleTheme()}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
+                  theme === 'dark'
+                    ? 'bg-teal-600 text-white'
+                    : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                }`}
+              >
+                <Moon className="w-4 h-4" />
+                Dark
+              </button>
+              <button
+                onClick={() => theme !== 'light' && toggleTheme()}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
+                  theme === 'light'
+                    ? 'bg-teal-600 text-white'
+                    : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                }`}
+              >
+                <Sun className="w-4 h-4" />
+                Light
               </button>
             </div>
           </div>
