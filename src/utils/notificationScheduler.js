@@ -45,15 +45,24 @@ export const calculateNotificationDelay = (minutesFromNow, leadTimeMinutes) => {
  * Format feed notification content
  * @param {number} minutesUntilFeed - Minutes until the predicted feed time
  * @param {string} predictedTimeStr - Formatted time string (e.g., "14:30")
+ * @param {string} babyName - Baby's name for personalized notification
  * @returns {{ title: string, body: string, tag: string }}
  */
-export const formatFeedNotification = (minutesUntilFeed, predictedTimeStr) => {
+export const formatFeedNotification = (minutesUntilFeed, predictedTimeStr, babyName = 'Baby') => {
   const mins = Math.round(minutesUntilFeed);
+  const name = babyName || 'Baby';
+
+  if (mins <= 1) {
+    return {
+      title: `🍼 Feed Time for ${name}`,
+      body: `It's feeding time! Predicted around ${predictedTimeStr}`,
+      tag: 'babyrhythm-feed'
+    };
+  }
+
   return {
-    title: 'Feed Time Coming Up',
-    body: mins <= 1
-      ? `Feed time is now (~${predictedTimeStr})`
-      : `Next feed in about ${mins} minutes (~${predictedTimeStr})`,
+    title: `🍼 ${name}'s Feed Coming Up`,
+    body: `Get ready - next feed in about ${mins} minutes (~${predictedTimeStr})`,
     tag: 'babyrhythm-feed'
   };
 };
@@ -62,16 +71,39 @@ export const formatFeedNotification = (minutesUntilFeed, predictedTimeStr) => {
  * Format nap notification content
  * @param {number} minutesUntilNap - Minutes until the predicted nap time
  * @param {string} predictedTimeStr - Formatted time string (e.g., "14:30")
+ * @param {string} babyName - Baby's name for personalized notification
  * @returns {{ title: string, body: string, tag: string }}
  */
-export const formatNapNotification = (minutesUntilNap, predictedTimeStr) => {
+export const formatNapNotification = (minutesUntilNap, predictedTimeStr, babyName = 'Baby') => {
   const mins = Math.round(minutesUntilNap);
+  const name = babyName || 'Baby';
+
+  if (mins <= 1) {
+    return {
+      title: `😴 Nap Time for ${name}`,
+      body: `${name} might be getting sleepy! Watch for tired signs.`,
+      tag: 'babyrhythm-nap'
+    };
+  }
+
   return {
-    title: 'Nap Time Coming Up',
-    body: mins <= 1
-      ? `Nap time is now (~${predictedTimeStr})`
-      : `Baby might be ready for a nap in about ${mins} minutes (~${predictedTimeStr})`,
+    title: `😴 ${name}'s Nap Coming Up`,
+    body: `Start winding down - ${name} may be ready for a nap in ~${mins} minutes (${predictedTimeStr})`,
     tag: 'babyrhythm-nap'
+  };
+};
+
+/**
+ * Format a test notification
+ * @param {string} babyName - Baby's name
+ * @returns {{ title: string, body: string, tag: string }}
+ */
+export const formatTestNotification = (babyName = 'Baby') => {
+  const name = babyName || 'Baby';
+  return {
+    title: `✅ BabyRhythm Notifications Active`,
+    body: `You'll receive reminders for ${name}'s feeds and naps!`,
+    tag: 'babyrhythm-test'
   };
 };
 

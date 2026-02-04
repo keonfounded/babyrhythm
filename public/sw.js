@@ -1,4 +1,4 @@
-const CACHE_NAME = 'babyrhythm-v4';
+const CACHE_NAME = 'babyrhythm-v5';
 const STATIC_ASSETS = [
   '/manifest.json'
 ];
@@ -32,21 +32,56 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('message', (event) => {
   if (event.data?.type === 'SHOW_NOTIFICATION') {
     const { title, body, tag, data } = event.data;
-    self.registration.showNotification(title, {
+
+    // Configure notification options based on type
+    const notificationOptions = {
       body,
       tag,
       icon: '/icons/icon-192.png',
       badge: '/icons/icon-72.png',
       data,
       requireInteraction: false,
-      silent: false
-    });
+      silent: false,
+      vibrate: [200, 100, 200], // Vibration pattern for mobile
+      renotify: true // Re-alert even if same tag
+    };
+
+    // Add action buttons based on notification type
+    if (data?.type === 'feed') {
+      notificationOptions.actions = [
+        { action: 'log-feed', title: '🍼 Log Feed' },
+        { action: 'dismiss', title: 'Dismiss' }
+      ];
+    } else if (data?.type === 'nap') {
+      notificationOptions.actions = [
+        { action: 'log-sleep', title: '😴 Start Sleep' },
+        { action: 'dismiss', title: 'Dismiss' }
+      ];
+    }
+
+    self.registration.showNotification(title, notificationOptions);
   }
 });
 
 // Handle notification clicks - open/focus app
 self.addEventListener('notificationclick', (event) => {
+  const action = event.action;
+  const notificationType = event.notification.data?.type;
+
   event.notification.close();
+
+  // Determine what action to take
+  let targetUrl = '/';
+  let postMessageAction = null;
+
+  if (action === 'log-feed' || (notificationType === 'feed' && !action)) {
+    postMessageAction = 'LOG_FEED_NOW';
+  } else if (action === 'log-sleep' || (notificationType === 'nap' && !action)) {
+    postMessageAction = 'BEGIN_SLEEP';
+  } else if (action === 'dismiss') {
+    // Just close, no further action needed
+    return;
+  }
 
   // Focus existing window or open new one
   event.waitUntil(
@@ -54,12 +89,18 @@ self.addEventListener('notificationclick', (event) => {
       // Try to focus an existing window
       for (const client of clientList) {
         if (client.url.includes(self.location.origin) && 'focus' in client) {
+          // Send action to the app if needed
+          if (postMessageAction) {
+            client.postMessage({ type: postMessageAction });
+          }
           return client.focus();
         }
       }
       // No existing window found, open a new one
       if (clients.openWindow) {
-        return clients.openWindow('/');
+        // Pass action as hash for app to handle
+        const url = postMessageAction ? `/?action=${postMessageAction.toLowerCase()}` : '/';
+        return clients.openWindow(url);
       }
     })
   );

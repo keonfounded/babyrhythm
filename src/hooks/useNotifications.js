@@ -4,6 +4,7 @@ import {
   calculateNotificationDelay,
   formatFeedNotification,
   formatNapNotification,
+  formatTestNotification,
   formatTimeFromDecimal
 } from '../utils/notificationScheduler';
 
@@ -95,7 +96,7 @@ export const useNotifications = () => {
   }, []);
 
   // Schedule notifications based on predictions
-  const scheduleNotifications = useCallback((feedPrediction, napPrediction) => {
+  const scheduleNotifications = useCallback((feedPrediction, napPrediction, babyName = 'Baby') => {
     // Clear any existing scheduled notifications
     clearScheduledNotifications();
 
@@ -113,10 +114,9 @@ export const useNotifications = () => {
       if (delay > 0) {
         const predictedTimeStr = feedPrediction.predictedTimeStr ||
           formatTimeFromDecimal(feedPrediction.predicted);
-        const notifyMinutesUntil = feedPrediction.minutesFromNow - (feedPrediction.minutesFromNow - leadTimeMinutes);
 
         feedTimeoutRef.current = setTimeout(() => {
-          const { title, body, tag } = formatFeedNotification(leadTimeMinutes, predictedTimeStr);
+          const { title, body, tag } = formatFeedNotification(leadTimeMinutes, predictedTimeStr, babyName);
           sendNotificationToSW(title, body, tag, { type: 'feed' });
         }, delay);
       }
@@ -131,12 +131,25 @@ export const useNotifications = () => {
           formatTimeFromDecimal(napPrediction.predicted);
 
         napTimeoutRef.current = setTimeout(() => {
-          const { title, body, tag } = formatNapNotification(leadTimeMinutes, predictedTimeStr);
+          const { title, body, tag } = formatNapNotification(leadTimeMinutes, predictedTimeStr, babyName);
           sendNotificationToSW(title, body, tag, { type: 'nap' });
         }, delay);
       }
     }
   }, [settings, permissionStatus, clearScheduledNotifications]);
+
+  // Send a test notification
+  const sendTestNotification = useCallback(async (babyName = 'Baby') => {
+    if (permissionStatus !== 'granted') {
+      const result = await requestPermission();
+      if (result !== 'granted') {
+        return false;
+      }
+    }
+
+    const { title, body, tag } = formatTestNotification(babyName);
+    return sendNotificationToSW(title, body, tag, { type: 'test' });
+  }, [permissionStatus, requestPermission]);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -187,6 +200,7 @@ export const useNotifications = () => {
     setNapNotificationsEnabled,
     setLeadTimeMinutes,
     scheduleNotifications,
-    clearScheduledNotifications
+    clearScheduledNotifications,
+    sendTestNotification
   };
 };

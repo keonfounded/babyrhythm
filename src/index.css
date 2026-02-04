@@ -35,6 +35,43 @@
   -webkit-tap-highlight-color: transparent;
 }
 
+/* Mobile touch improvements */
+@media (max-width: 768px) {
+  /* Better touch targets */
+  button, a, [role="button"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Prevent pull-to-refresh interfering with scroll */
+  body {
+    overscroll-behavior-y: contain;
+  }
+
+  /* Better tap feedback */
+  button:active, a:active, [role="button"]:active {
+    opacity: 0.8;
+    transform: scale(0.98);
+  }
+}
+
+/* Active state for touch feedback */
+.touch-active:active {
+  transform: scale(0.95);
+  transition: transform 0.1s ease-out;
+}
+
+/* Bottom navigation spacing helper */
+.bottom-nav-spacer {
+  height: calc(80px + env(safe-area-inset-bottom, 0));
+}
+
 /* Extra small breakpoint for very small phones */
 @media (min-width: 360px) {
   .xs\:inline {

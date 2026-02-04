@@ -32,7 +32,8 @@ const Sidebar = ({
   setNapNotificationsEnabled,
   leadTimeMinutes,
   setLeadTimeMinutes,
-  permissionStatus
+  permissionStatus,
+  sendTestNotification
 }) => {
   return (
     <div className="w-80 space-y-4">
@@ -297,6 +298,17 @@ const Sidebar = ({
                 <option value={30}>30 minutes</option>
               </select>
             </div>
+          )}
+
+          {/* Test notification button */}
+          {notificationsEnabled && permissionStatus === 'granted' && (
+            <button
+              onClick={sendTestNotification}
+              className="w-full mt-3 px-3 py-2 bg-gray-700 hover:bg-gray-600 text-gray-300 text-sm rounded transition-colors flex items-center justify-center gap-2"
+            >
+              <Bell className="w-4 h-4" />
+              Send Test Notification
+            </button>
           )}
         </div>
 

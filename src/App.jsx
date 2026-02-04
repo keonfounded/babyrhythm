@@ -180,7 +180,8 @@ const BabyRhythm = () => {
     setFeedNotificationsEnabled,
     setNapNotificationsEnabled,
     setLeadTimeMinutes,
-    scheduleNotifications
+    scheduleNotifications,
+    sendTestNotification
   } = useNotifications();
 
   useEffect(() => {
@@ -199,7 +200,7 @@ const BabyRhythm = () => {
     const feedPrediction = predictNextFeed(babyProfile.birthDate, dailySchedules);
     const napPrediction = predictNextNap(babyProfile.birthDate, dailySchedules);
 
-    scheduleNotifications(feedPrediction, napPrediction);
+    scheduleNotifications(feedPrediction, napPrediction, babyProfile.name);
   }, [
     babyProfile,
     dailySchedules,
@@ -216,7 +217,7 @@ const BabyRhythm = () => {
       if (document.visibilityState === 'visible' && babyProfile && notificationsEnabled) {
         const feedPrediction = predictNextFeed(babyProfile.birthDate, dailySchedules);
         const napPrediction = predictNextNap(babyProfile.birthDate, dailySchedules);
-        scheduleNotifications(feedPrediction, napPrediction);
+        scheduleNotifications(feedPrediction, napPrediction, babyProfile.name);
       }
     };
 
@@ -239,6 +240,24 @@ const BabyRhythm = () => {
       clearShareFromUrl();
     }
   }, []);
+
+  // Listen for service worker messages (notification actions)
+  useEffect(() => {
+    const handleServiceWorkerMessage = (event) => {
+      if (event.data?.type === 'LOG_FEED_NOW') {
+        logEventNow('feed');
+      } else if (event.data?.type === 'BEGIN_SLEEP') {
+        if (!activeSleepSession) {
+          beginSleep();
+        }
+      }
+    };
+
+    navigator.serviceWorker?.addEventListener('message', handleServiceWorkerMessage);
+    return () => {
+      navigator.serviceWorker?.removeEventListener('message', handleServiceWorkerMessage);
+    };
+  }, [logEventNow, beginSleep, activeSleepSession]);
 
   // Handle import from shared data
   const handleImportSharedData = (importData, mode) => {
@@ -609,6 +628,7 @@ const exportData = () => {
                   leadTimeMinutes={leadTimeMinutes}
                   setLeadTimeMinutes={setLeadTimeMinutes}
                   permissionStatus={permissionStatus}
+                  sendTestNotification={() => sendTestNotification(babyProfile.name)}
                 />
               </div>
             </div>

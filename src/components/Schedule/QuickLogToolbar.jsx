@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Clock, X, Undo2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { formatTime, getCurrentTimeInHours } from '../../utils/timeHelpers';
 
 const QuickLogToolbar = ({
@@ -13,6 +14,7 @@ const QuickLogToolbar = ({
   canUndo,
   undoLabel
 }) => {
+  const { t } = useTranslation();
   const [showFeedAmount, setShowFeedAmount] = useState(false);
   const [feedAmount, setFeedAmount] = useState('');
   const [showDiaperType, setShowDiaperType] = useState(false);
@@ -173,8 +175,8 @@ const QuickLogToolbar = ({
         )}
       </div>
 
-      {/* Mobile floating bottom bar */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 z-30 bg-gray-900 border-t border-gray-700 safe-area-pb">
+      {/* Mobile floating bottom bar - above the tab navigation */}
+      <div className="md:hidden fixed bottom-16 left-0 right-0 z-50 bg-gray-800 border-t border-gray-700 shadow-lg">
         {/* Expanded states (feed amount or diaper type) */}
         {showFeedAmount && (
           <div className="p-4 bg-gray-800 border-b border-gray-700">
@@ -330,8 +332,8 @@ const QuickLogToolbar = ({
         )}
       </div>
 
-      {/* Spacer for mobile bottom bar */}
-      <div className="md:hidden h-24" />
+      {/* Spacer for mobile quick log bar (above the nav bar) */}
+      <div className="md:hidden h-28" />
     </>
   );
 };
