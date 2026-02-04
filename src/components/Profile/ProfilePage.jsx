@@ -1,5 +1,6 @@
 import React from 'react';
-import { User, Calendar, Save, X, Plus, Trash2, Download } from 'lucide-react';
+import { User, Calendar, Save, X, Plus, Trash2, Download, Globe } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { calculateAge } from '../../utils/dateHelpers';
 import { exportWeightHistoryToCSV } from '../../utils/csvExportHelpers';
 
@@ -16,8 +17,13 @@ const ProfilePage = ({
   updateWeightEntry,
   updateEditingProfile
 }) => {
+  const { t, i18n } = useTranslation();
   const profile = editingProfile || babyProfile;
   const isEditing = editingProfile !== null;
+
+  const changeLanguage = (lng) => {
+    i18n.changeLanguage(lng);
+  };
   
   const displayWeight = getCurrentWeight(profile);
   const displayWeightDate = getCurrentWeightDate(profile);
@@ -314,6 +320,44 @@ const ProfilePage = ({
             ) : (
               <div className="text-white">{profile.medications || 'None'}</div>
             )}
+          </div>
+        </div>
+      </div>
+
+      {/* App Settings */}
+      <div className="bg-gray-800 rounded-lg p-6 mt-6">
+        <h3 className="text-xl font-semibold text-teal-300 mb-4 flex items-center gap-2">
+          <Globe className="w-5 h-5" />
+          {t('profile.settings')}
+        </h3>
+
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              {t('profile.language')}
+            </label>
+            <div className="flex gap-2">
+              <button
+                onClick={() => changeLanguage('en')}
+                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                  i18n.language === 'en' || i18n.language.startsWith('en-')
+                    ? 'bg-teal-600 text-white'
+                    : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                }`}
+              >
+                🇺🇸 English
+              </button>
+              <button
+                onClick={() => changeLanguage('ko')}
+                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                  i18n.language === 'ko' || i18n.language.startsWith('ko-')
+                    ? 'bg-teal-600 text-white'
+                    : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                }`}
+              >
+                🇰🇷 한국어
+              </button>
+            </div>
           </div>
         </div>
       </div>
