@@ -5,7 +5,8 @@
  * @returns {Date} - Date object in local timezone
  */
 export const parseDateString = (dateStr) => {
-  return new Date(dateStr + 'T00:00:00');
+  const [year, month, day] = dateStr.split('-').map(Number);
+  return new Date(year, month - 1, day, 0, 0, 0, 0);
 };
 
 /**

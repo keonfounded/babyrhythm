@@ -74,10 +74,10 @@ const ContinuousTimeline = ({
 
   const hourSlots = generateHourSlots();
 
-  // Get absolute hour position for an event
+  // Get absolute hour position for an event (timezone-safe)
   const getAbsoluteHour = (dateKey, hour) => {
-    const eventDate = new Date(dateKey + 'T00:00:00');
-    eventDate.setHours(Math.floor(hour), (hour % 1) * 60);
+    const [year, month, day] = dateKey.split('-').map(Number);
+    const eventDate = new Date(year, month - 1, day, Math.floor(hour), Math.round((hour % 1) * 60), 0, 0);
     const diffMs = eventDate.getTime() - startTime.getTime();
     return diffMs / (60 * 60 * 1000);
   };
@@ -432,8 +432,10 @@ const ContinuousTimeline = ({
             className="absolute left-0 right-0 z-20 pointer-events-none flex items-center"
             style={{ top: nowPositionPx + 28 }}
           >
-            <div className="w-14 text-right pr-1">
-              <span className="text-[10px] text-red-400 font-bold bg-gray-900 px-1">NOW</span>
+            <div className="w-16 md:w-20 text-right pr-1">
+              <span className="text-[10px] text-red-400 font-bold bg-gray-900 px-1 rounded">
+                {formatTime(currentHour)}
+              </span>
             </div>
             <div className="flex-1 flex items-center">
               <div className="w-2 h-2 bg-red-500 rounded-full"></div>
