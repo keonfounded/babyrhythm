@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="64" fill="#111827"/>
+  <circle cx="256" cy="220" r="100" fill="#2dd4bf"/>
+  <ellipse cx="220" cy="200" rx="15" ry="20" fill="#111827"/>
+  <ellipse cx="292" cy="200" rx="15" ry="20" fill="#111827"/>
+  <path d="M 220 250 Q 256 280 292 250" stroke="#111827" stroke-width="8" fill="none" stroke-linecap="round"/>
+  <path d="M 180 140 Q 200 100 256 110 Q 312 100 332 140" stroke="#2dd4bf" stroke-width="12" fill="none" stroke-linecap="round"/>
+  <circle cx="400" cy="120" r="40" fill="#fbbf24" opacity="0.3"/>
+  <path d="M 400 80 L 400 70 M 430 90 L 440 80 M 440 120 L 450 120 M 430 150 L 440 160 M 400 160 L 400 170 M 370 150 L 360 160 M 360 120 L 350 120 M 370 90 L 360 80" stroke="#fbbf24" stroke-width="4" stroke-linecap="round" opacity="0.5"/>
+  <text x="256" y="400" text-anchor="middle" font-family="system-ui, sans-serif" font-size="48" font-weight="bold" fill="#2dd4bf">BabyRhythm</text>
+</svg>

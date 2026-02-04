@@ -1,0 +1,102 @@
+@import "tailwindcss";
+
+/* Safe area padding for notched devices (iPhone X+) */
+.safe-area-pb {
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+.safe-area-pt {
+  padding-top: env(safe-area-inset-top, 0);
+}
+
+/* Custom scrollbar for dark theme */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1f2937;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #4b5563;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #6b7280;
+}
+
+/* Prevent text selection on tap for mobile buttons */
+.no-select {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Extra small breakpoint for very small phones */
+@media (min-width: 360px) {
+  .xs\:inline {
+    display: inline;
+  }
+  .xs\:hidden {
+    display: none;
+  }
+}
+
+/* Print styles for Doctor Visit Report */
+@media print {
+  /* Hide everything except the printable report */
+  body {
+    background: white !important;
+    color: black !important;
+  }
+
+  .print\:hidden {
+    display: none !important;
+  }
+
+  .print\:block {
+    display: block !important;
+  }
+
+  /* Reset dark theme styles for printing */
+  .print-report {
+    display: block !important;
+    background: white !important;
+    color: black !important;
+    padding: 0.5in !important;
+    margin: 0 !important;
+    max-width: none !important;
+  }
+
+  .print-report h1,
+  .print-report h2,
+  .print-report h3 {
+    color: black !important;
+  }
+
+  .print-report strong {
+    color: black !important;
+  }
+
+  /* Page breaks */
+  .print-report section {
+    page-break-inside: avoid;
+  }
+
+  /* Hide header, nav, and other UI elements */
+  header,
+  nav,
+  footer,
+  .no-print {
+    display: none !important;
+  }
+
+  /* Ensure good contrast */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}
