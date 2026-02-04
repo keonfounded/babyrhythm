@@ -166,11 +166,94 @@ const generateDayNotes = (daysAgo) => {
   return notes;
 };
 
+// Generate today's events based on current time
+const generateTodayEvents = () => {
+  const now = new Date();
+  const currentHour = now.getHours() + now.getMinutes() / 60;
+  const events = [];
+
+  // Night sleep that ended this morning (woke up 1-2 hours ago or at 7am, whichever is more recent)
+  const wakeUpTime = Math.max(7, currentHour - 1.5); // Woke up 1.5 hours ago or 7am
+  if (wakeUpTime < currentHour) {
+    events.push({
+      type: 'sleep',
+      startTime: 20, // Went to bed at 8pm yesterday (will show as previous day context)
+      endTime: wakeUpTime,
+      note: ''
+    });
+
+    // Morning feed after waking
+    events.push({
+      type: 'feed',
+      startTime: wakeUpTime + 0.25,
+      amount: 6,
+      note: 'Breakfast'
+    });
+
+    // Diaper after waking
+    events.push({
+      type: 'diaper',
+      startTime: wakeUpTime + 0.5,
+      diaperType: 'wet',
+      note: ''
+    });
+  }
+
+  // If it's afternoon, add a morning nap that ended
+  if (currentHour > 12) {
+    const napStart = 9.5;
+    const napEnd = Math.min(11, currentHour - 1); // Nap ended at least 1 hour ago
+    if (napEnd > napStart) {
+      events.push({
+        type: 'sleep',
+        startTime: napStart,
+        endTime: napEnd,
+        note: 'Morning nap'
+      });
+
+      // Lunch
+      events.push({
+        type: 'feed',
+        startTime: 12,
+        amount: null,
+        note: 'Lunch'
+      });
+
+      events.push({
+        type: 'diaper',
+        startTime: 11.5,
+        diaperType: 'dirty',
+        note: ''
+      });
+    }
+  }
+
+  // If it's late afternoon/evening, add afternoon nap
+  if (currentHour > 16) {
+    events.push({
+      type: 'sleep',
+      startTime: 13.5,
+      endTime: Math.min(15.5, currentHour - 0.5),
+      note: 'Afternoon nap'
+    });
+
+    events.push({
+      type: 'feed',
+      startTime: 15.5,
+      amount: null,
+      note: 'Snack'
+    });
+  }
+
+  return events;
+};
+
 // Generate daily schedule with events
 const generateDailySchedules = (days = 60) => {
   const schedules = {};
 
-  for (let i = 0; i < days; i++) {
+  // Generate past days (starting from yesterday)
+  for (let i = 1; i < days; i++) {
     const dateKey = getDateKey(i);
     const isWeekday = new Date(dateKey).getDay() > 0 && new Date(dateKey).getDay() < 6;
 
@@ -190,7 +273,6 @@ const generateDailySchedules = (days = 60) => {
     schedules[dateKey] = {
       date: dateKey,
       loggedEvents: allEvents,
-      // Include default schedule structure
       manualFeedTimes: null,
       momBlocks: [
         { id: 1, type: 'sleep', start: 0, end: 6 },
@@ -209,6 +291,37 @@ const generateDailySchedules = (days = 60) => {
       dadPreferredSleepStart: null
     };
   }
+
+  // Generate TODAY's events based on current time
+  const todayKey = getDateKey(0);
+  const todayEvents = generateTodayEvents()
+    .map((event, idx) => ({
+      ...event,
+      id: `demo-${todayKey}-${idx}`,
+      date: todayKey
+    }))
+    .sort((a, b) => a.startTime - b.startTime);
+
+  schedules[todayKey] = {
+    date: todayKey,
+    loggedEvents: todayEvents,
+    manualFeedTimes: null,
+    momBlocks: [
+      { id: 1, type: 'sleep', start: 0, end: 6 },
+      { id: 2, type: 'duty', start: 6, end: 12 },
+      { id: 3, type: 'sleep', start: 12, end: 16 },
+      { id: 4, type: 'duty', start: 16, end: 24 }
+    ],
+    dadBlocks: [
+      { id: 1, type: 'duty', start: 0, end: 6 },
+      { id: 2, type: 'sleep', start: 6, end: 12 },
+      { id: 3, type: 'duty', start: 12, end: 16 },
+      { id: 4, type: 'sleep', start: 16, end: 24 }
+    ],
+    manuallyModified: false,
+    momPreferredSleepStart: null,
+    dadPreferredSleepStart: null
+  };
 
   return schedules;
 };
