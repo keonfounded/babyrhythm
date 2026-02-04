@@ -1,4 +1,4 @@
-const CACHE_NAME = 'babyrhythm-v2';
+const CACHE_NAME = 'babyrhythm-v3';
 const STATIC_ASSETS = [
   '/manifest.json'
 ];
