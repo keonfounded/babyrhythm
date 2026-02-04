@@ -1,25 +1,51 @@
 /**
- * Send a notification request to the service worker
- * This allows notifications to be shown even when the app is backgrounded
+ * Show a notification - tries service worker first, falls back to direct Notification API
  */
 export const sendNotificationToSW = async (title, body, tag, data = {}) => {
-  if (!('serviceWorker' in navigator)) {
-    console.warn('Service workers not supported');
+  // Check if notifications are supported and permitted
+  if (!('Notification' in window)) {
+    console.warn('Notifications not supported');
     return false;
   }
 
+  if (Notification.permission !== 'granted') {
+    console.warn('Notification permission not granted');
+    return false;
+  }
+
+  // Try to use service worker for better background support
+  if ('serviceWorker' in navigator) {
+    try {
+      const registration = await navigator.serviceWorker.ready;
+
+      // Use showNotification directly on the registration for reliability
+      await registration.showNotification(title, {
+        body,
+        tag,
+        icon: '/icons/icon-192.png',
+        badge: '/icons/icon-72.png',
+        data,
+        requireInteraction: false,
+        silent: false,
+        vibrate: [200, 100, 200],
+        renotify: true
+      });
+      return true;
+    } catch (error) {
+      console.warn('Service worker notification failed, using fallback:', error);
+    }
+  }
+
+  // Fallback: Use direct Notification API
   try {
-    const registration = await navigator.serviceWorker.ready;
-    registration.active?.postMessage({
-      type: 'SHOW_NOTIFICATION',
-      title,
+    new Notification(title, {
       body,
       tag,
-      data
+      icon: '/icons/icon-192.png'
     });
     return true;
   } catch (error) {
-    console.error('Failed to send notification to SW:', error);
+    console.error('Failed to show notification:', error);
     return false;
   }
 };
