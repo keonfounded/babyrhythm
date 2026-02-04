@@ -189,7 +189,24 @@ const generateDailySchedules = (days = 60) => {
 
     schedules[dateKey] = {
       date: dateKey,
-      loggedEvents: allEvents
+      loggedEvents: allEvents,
+      // Include default schedule structure
+      manualFeedTimes: null,
+      momBlocks: [
+        { id: 1, type: 'sleep', start: 0, end: 6 },
+        { id: 2, type: 'duty', start: 6, end: 12 },
+        { id: 3, type: 'sleep', start: 12, end: 16 },
+        { id: 4, type: 'duty', start: 16, end: 24 }
+      ],
+      dadBlocks: [
+        { id: 1, type: 'duty', start: 0, end: 6 },
+        { id: 2, type: 'sleep', start: 6, end: 12 },
+        { id: 3, type: 'duty', start: 12, end: 16 },
+        { id: 4, type: 'sleep', start: 16, end: 24 }
+      ],
+      manuallyModified: false,
+      momPreferredSleepStart: null,
+      dadPreferredSleepStart: null
     };
   }
 

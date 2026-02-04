@@ -96,25 +96,23 @@ export const useProfile = () => {
   const loadDemoData = (demoData) => {
     const { profile, dailySchedules, milestones } = demoData;
 
-    // Save profile
-    setBabyProfile(profile);
-    setOnboardingComplete(true);
     try {
+      // Save all data to localStorage first
       localStorage.setItem('babyRhythm_babyProfile', JSON.stringify(profile));
       localStorage.setItem('babyRhythm_onboardingComplete', 'true');
-
-      // Save schedules
       localStorage.setItem('babyRhythm_dailySchedules', JSON.stringify(dailySchedules));
-
-      // Save milestones
       localStorage.setItem('babyRhythm_milestones', JSON.stringify(milestones));
-
-      // Mark as demo mode
       localStorage.setItem('babyRhythm_isDemo', 'true');
-    } catch {}
+      localStorage.setItem('babyRhythm_tutorialShown', 'false'); // Show tutorial for demo
+    } catch (e) {
+      console.error('Failed to save demo data:', e);
+      return;
+    }
 
-    // Reload to apply schedules
-    window.location.reload();
+    // Small delay to ensure localStorage is written, then reload
+    setTimeout(() => {
+      window.location.reload();
+    }, 100);
   };
 
   const addWeightEntry = () => {
