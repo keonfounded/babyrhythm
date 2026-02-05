@@ -48,12 +48,12 @@ Beautiful charts and actionable insights:
 - **Diaper Analytics** — Track output patterns
 
 ### Milestone Tracking
-40+ predefined developmental milestones across categories:
+45+ predefined developmental milestones based on CDC 2022 guidelines:
 
-- **Motor Skills** — 15 milestones (rolling, sitting, crawling, walking...)
-- **Social & Emotional** — 10 milestones (first smile, stranger anxiety...)
-- **Language & Communication** — 8+ milestones (cooing, first words...)
-- **Cognitive** — 8+ milestones (object permanence, cause/effect...)
+- **Motor Skills** — Rolling, sitting, walking, running...
+- **Social & Emotional** — First smile, stranger anxiety, pretend play...
+- **Language & Communication** — Cooing, babbling, first words, phrases...
+- **Cognitive** — Object permanence, stacking, puzzles...
 - **Custom Milestones** — Add your own special moments
 - **CSV Export** — Download milestone history
 
@@ -106,6 +106,22 @@ A beautiful, functional daily view:
 
 ---
 
+## Data Sources & Medical Disclaimer
+
+BabyRhythm uses data from reputable medical organizations:
+
+| Data | Source |
+|------|--------|
+| Growth Charts | [WHO Child Growth Standards](https://www.who.int/tools/child-growth-standards) |
+| Milestones | [CDC "Learn the Signs. Act Early" (2022)](https://www.cdc.gov/act-early/milestones/index.html) |
+| Sleep Guidelines | [AASM Sleep Duration Recommendations](https://pmc.ncbi.nlm.nih.gov/articles/PMC4877308/) |
+| Wake Windows | [Cleveland Clinic](https://health.clevelandclinic.org/wake-windows-by-age), [Sleep Foundation](https://www.sleepfoundation.org/baby-sleep/newborn-wake-windows) |
+| Feeding Guidelines | [AAP Breastfeeding](https://www.aap.org/en/patient-care/newborn-and-infant-nutrition/newborn-and-infant-breastfeeding/) |
+
+**Important:** BabyRhythm is an informational tool only, NOT a substitute for medical advice. Predictions are estimates based on patterns. Always consult your pediatrician for health concerns.
+
+---
+
 ## Tech Stack
 
 - **Framework** — React 18 with TypeScript
@@ -148,6 +164,28 @@ Click "Try Demo" on the welcome screen to explore with sample data.
 
 ## Version History
 
+### v1.0.1 (February 2025)
+**Data Accuracy & Documentation Update**
+
+#### Data Sources Updated
+- Milestones updated to CDC 2022 guidelines (75th percentile standard)
+- Wake windows revised to align with Cleveland Clinic/Sleep Foundation guidance
+- Added proper citations to WHO, AAP, CDC, and AASM sources
+
+#### Medical Disclaimers Added
+- Onboarding disclaimer ("Not medical advice")
+- Prediction disclaimers on nap/feed estimates
+- Growth chart disclaimer (screening tool, not diagnosis)
+- Milestone disclaimer (guidelines, not deadlines)
+- Full medical disclaimer in Profile settings
+
+#### Documentation
+- Comprehensive README with feature documentation
+- Strategic roadmap (ROADMAP.md) for v2/v3 planning
+- Data accuracy audit report (AUDIT_REPORT.md)
+
+---
+
 ### v1.0.0 (February 2025)
 **Initial Release** — Full-featured baby tracking app
 
@@ -155,7 +193,7 @@ Click "Try Demo" on the welcome screen to explore with sample data.
 - Sleep, feed, diaper, pump, medication, and note tracking
 - ML-based nap and feed predictions
 - Growth charts with WHO percentiles
-- 40+ developmental milestones
+- 45+ developmental milestones
 - Doctor visit report generator
 - Caregiver sharing via QR code and links
 

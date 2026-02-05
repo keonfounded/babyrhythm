@@ -1,6 +1,6 @@
 # BabyRhythm - Strategic Roadmap
 
-## Current State (v1.0 - February 2025)
+## Current State (v1.0.1 - February 2025)
 
 ### What's Working Well
 - Solid core tracking for 6 event types (sleep, feed, diaper, pump, medication, notes)
@@ -9,7 +9,7 @@
 - Clean PWA with offline support
 - Caregiver sharing via QR codes
 - Doctor Visit Mode with professional reports
-- 40+ developmental milestones
+- 45+ developmental milestones (CDC 2022 aligned)
 
 ### Technical Foundation
 - React 19 + Vite
@@ -22,6 +22,29 @@
 - No real-time sync between devices
 - No backend/database
 - Activity tracking hooks present but not fully implemented
+
+---
+
+## Recently Completed (v1.0.1)
+
+### Data Accuracy Audit & Updates
+- [x] Updated milestones to CDC 2022 guidelines (75th percentile)
+- [x] Revised wake windows for 0-8 weeks to be more conservative
+- [x] Added source citations to all data files (WHO, AAP, CDC, AASM)
+- [x] Verified WHO growth chart data against official tables
+
+### Medical Disclaimers
+- [x] Added disclaimer to onboarding wizard
+- [x] Added disclaimer to nap/feed predictions
+- [x] Added disclaimer to growth chart
+- [x] Added disclaimer to milestones page
+- [x] Added full medical disclaimer in Profile settings
+- [x] Documented that confidence scores are heuristic, not validated
+
+### Documentation
+- [x] Created comprehensive README.md
+- [x] Created strategic roadmap (this file)
+- [x] Created data accuracy audit report (AUDIT_REPORT.md)
 
 ---
 
