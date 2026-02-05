@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { User, Calendar, Save, X, Plus, Trash2, Download, Globe, AlertTriangle, RefreshCw, HelpCircle, Sun, Moon, MessageSquare } from 'lucide-react';
 
-// Replace with your Google Form URL
-const FEEDBACK_FORM_URL = 'https://forms.gle/YOUR_FORM_ID_HERE';
+const FEEDBACK_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSeks07t2eVQqHsowCGk0DWmMe433ivIyPYauoAPeojCREfIBQ/viewform';
 import { useTranslation } from 'react-i18next';
 import { calculateAge } from '../../utils/dateHelpers';
 import { exportWeightHistoryToCSV } from '../../utils/csvExportHelpers';
