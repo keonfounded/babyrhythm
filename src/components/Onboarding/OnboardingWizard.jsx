@@ -131,6 +131,15 @@ const OnboardingWizard = ({ onComplete, onLoadDemo }) => {
               <p className="text-xs text-gray-500 mt-4">
                 Demo shows sample data for a 1-year-old baby
               </p>
+
+              {/* Disclaimer */}
+              <div className="mt-6 p-3 bg-gray-700/50 rounded-lg border border-gray-600/50">
+                <p className="text-xs text-gray-400 leading-relaxed">
+                  <span className="font-medium text-gray-300">Not medical advice.</span>{' '}
+                  BabyRhythm provides informational tracking and estimates only.
+                  Always consult your pediatrician for health concerns.
+                </p>
+              </div>
             </div>
           )}
 
@@ -338,7 +347,7 @@ const OnboardingWizard = ({ onComplete, onLoadDemo }) => {
 
         {/* Footer */}
         <p className="text-center text-gray-500 text-xs mt-6">
-          Your data stays on this device
+          Your data stays on this device. Not medical advice.
         </p>
       </div>
     </div>

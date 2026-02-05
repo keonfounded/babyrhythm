@@ -368,6 +368,15 @@ const GrowthChart = ({ weightHistory, birthDate, sex = 'boy', weightUnit = 'kg' 
           <span>Normal range (15th-85th)</span>
         </div>
       </div>
+
+      {/* Disclaimer */}
+      <div className="mt-4 p-3 bg-gray-700/50 rounded-lg">
+        <p className="text-xs text-gray-400 leading-relaxed">
+          <span className="font-medium text-gray-300">Based on WHO Child Growth Standards.</span>{' '}
+          Percentiles are screening tools, not diagnoses. Many healthy babies fall outside the "normal" range.
+          Consult your pediatrician for interpretation of your baby's growth pattern.
+        </p>
+      </div>
     </div>
   );
 };

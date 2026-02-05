@@ -1,13 +1,30 @@
 import { getAgeInWeeks } from './sleepPredictor';
 import { getDateKey } from './dateHelpers';
+import {
+  getWeightedAverage,
+  splitByTimeOfDay,
+  calculateConfidence,
+  isDaytime,
+  calculateStdDev,
+  getTrend
+} from './predictionHelpers';
 
 /**
  * Age-based feeding intervals (hours between feeds)
  *
- * Sources:
- * - American Academy of Pediatrics (AAP): https://www.aap.org
- * - WHO infant feeding guidelines
- * - "Healthy Sleep Habits, Happy Child" by Dr. Marc Weissbluth
+ * Primary Sources:
+ * - AAP Breastfeeding Guidelines: https://www.aap.org/en/patient-care/newborn-and-infant-nutrition/newborn-and-infant-breastfeeding/
+ * - HealthyChildren.org (AAP): https://www.healthychildren.org/English/ages-stages/baby/feeding-nutrition/Pages/how-often-and-how-much-should-your-baby-eat.aspx
+ * - Nemours KidsHealth: https://kidshealth.org/en/parents/feednewborn.html
+ *
+ * Key AAP Guidance:
+ * - Newborns should nurse 8-12 times per 24 hours (every 2-3 hours)
+ * - Feed on demand, watching for hunger cues
+ * - Breastfed babies typically feed more frequently than formula-fed
+ * - Do not go more than 4-5 hours without feeding in first weeks
+ *
+ * NOTE: These are general guidelines. Individual babies vary.
+ * Always follow your pediatrician's recommendations.
  *
  * Newborns (0-4 weeks): Feed on demand, typically every 1.5-3 hours (8-12 feeds/day)
  * - Small stomach capacity (~1-2 oz) requires frequent feeding
@@ -66,11 +83,16 @@ export const getRecentFeedEvents = (dailySchedules, days = 7) => {
 
 /**
  * Calculate personal average feed interval from logged data
+ * Enhanced with weighted recency and day/night differentiation
  */
-export const getPersonalFeedInterval = (feedEvents) => {
+export const getPersonalFeedInterval = (feedEvents, options = {}) => {
+  const { separateDayNight = true, useWeightedRecency = true } = options;
+
   if (feedEvents.length < 2) return null;
 
   const intervals = [];
+  const observations = []; // For weighted recency
+
   for (let i = 0; i < feedEvents.length - 1; i++) {
     const current = feedEvents[i];
     const next = feedEvents[i + 1];
@@ -83,33 +105,93 @@ export const getPersonalFeedInterval = (feedEvents) => {
     // Filter out unreasonable gaps (< 1h or > 8h)
     if (gap >= 1 && gap <= 8) {
       intervals.push(gap);
+      observations.push({
+        value: gap,
+        dateKey: current.dateKey,
+        feedTime: current.startTime,
+        isDaytime: isDaytime(current.startTime)
+      });
     }
   }
 
   if (intervals.length === 0) return null;
 
+  // Calculate simple average
+  const simpleAverage = intervals.reduce((sum, i) => sum + i, 0) / intervals.length;
+
+  // Calculate weighted average (recent data weighted more heavily)
+  const weightedAverage = useWeightedRecency
+    ? getWeightedAverage(observations, 7) || simpleAverage
+    : simpleAverage;
+
+  // Separate day/night if requested
+  let daytimeStats = null;
+  let nighttimeStats = null;
+
+  if (separateDayNight) {
+    const { daytime, nighttime } = splitByTimeOfDay(observations, 'feedTime');
+
+    if (daytime.length >= 2) {
+      const daytimeValues = daytime.map(o => o.value);
+      daytimeStats = {
+        average: daytimeValues.reduce((a, b) => a + b, 0) / daytimeValues.length,
+        weighted: getWeightedAverage(daytime, 7) || daytimeValues.reduce((a, b) => a + b, 0) / daytimeValues.length,
+        count: daytime.length,
+        stdDev: calculateStdDev(daytimeValues)
+      };
+    }
+
+    if (nighttime.length >= 2) {
+      const nighttimeValues = nighttime.map(o => o.value);
+      nighttimeStats = {
+        average: nighttimeValues.reduce((a, b) => a + b, 0) / nighttimeValues.length,
+        weighted: getWeightedAverage(nighttime, 7) || nighttimeValues.reduce((a, b) => a + b, 0) / nighttimeValues.length,
+        count: nighttime.length,
+        stdDev: calculateStdDev(nighttimeValues)
+      };
+    }
+  }
+
+  // Calculate trend
+  const trend = getTrend(observations);
+
   return {
-    average: intervals.reduce((sum, i) => sum + i, 0) / intervals.length,
+    average: simpleAverage,
+    weighted: weightedAverage,
     min: Math.min(...intervals),
     max: Math.max(...intervals),
-    count: intervals.length
+    count: intervals.length,
+    stdDev: calculateStdDev(intervals),
+    daytime: daytimeStats,
+    nighttime: nighttimeStats,
+    trend,
+    observations
   };
 };
 
 /**
  * Calculate personal average feed duration from logged data
+ * Enhanced with weighted recency
  */
 export const getPersonalFeedDuration = (feedEvents) => {
   // Filter feeds that have an endTime (duration events)
   const withDuration = feedEvents.filter(e => e.endTime && e.endTime > e.startTime);
   if (withDuration.length === 0) return null;
 
-  const durations = withDuration.map(e => e.endTime - e.startTime);
+  const observations = withDuration.map(e => ({
+    value: e.endTime - e.startTime,
+    dateKey: e.dateKey
+  }));
+
+  const durations = observations.map(o => o.value);
+
   return {
     average: durations.reduce((sum, d) => sum + d, 0) / durations.length,
+    weighted: getWeightedAverage(observations, 7) || durations.reduce((sum, d) => sum + d, 0) / durations.length,
     min: Math.min(...durations),
     max: Math.max(...durations),
-    count: durations.length
+    count: durations.length,
+    stdDev: calculateStdDev(durations)
   };
 };
 
@@ -147,13 +229,13 @@ const formatHourToTime = (hour) => {
 
 /**
  * Predict feeds for the next 24 hours
- * Returns array of predicted feed events
+ * Enhanced with weighted recency, day/night patterns, and confidence scores
  */
 export const predictRemainingFeeds = (birthDate, dailySchedules, defaultFeedDuration = 0.5) => {
   const ageInWeeks = getAgeInWeeks(birthDate);
   const defaults = getFeedDefaultsForAge(ageInWeeks);
-  const recentFeeds = getRecentFeedEvents(dailySchedules, 7);
-  const personalInterval = getPersonalFeedInterval(recentFeeds);
+  const recentFeeds = getRecentFeedEvents(dailySchedules, 14); // Extended to 14 days
+  const personalInterval = getPersonalFeedInterval(recentFeeds, { separateDayNight: true, useWeightedRecency: true });
   const personalDuration = getPersonalFeedDuration(recentFeeds);
 
   // Determine feed interval (blend personal + age-based)
@@ -163,12 +245,33 @@ export const predictRemainingFeeds = (birthDate, dailySchedules, defaultFeedDura
 
   let feedInterval;
   let source;
+
+  const now = new Date();
+  const currentHour = now.getHours() + now.getMinutes() / 60;
+  const currentlyDaytime = isDaytime(currentHour);
+
   if (personalInterval && personalInterval.count >= 5) {
+    // Use day/night specific data if available and relevant
+    if (currentlyDaytime && personalInterval.daytime && personalInterval.daytime.count >= 3) {
+      // Daytime prediction - babies often feed more frequently during day
+      feedInterval = personalInterval.daytime.weighted;
+      source = 'personalized-daytime';
+    } else if (!currentlyDaytime && personalInterval.nighttime && personalInterval.nighttime.count >= 3) {
+      // Nighttime prediction - often longer intervals at night
+      feedInterval = personalInterval.nighttime.weighted;
+      source = 'personalized-nighttime';
+    } else {
+      // Fall back to overall weighted average
+      feedInterval = personalInterval.weighted;
+      source = 'personalized';
+    }
+
+    // Blend with age defaults (70% personal, 30% age)
     const ageAvg = (defaults.interval.min + defaults.interval.max) / 2;
-    const blended = personalInterval.average * 0.7 + ageAvg * 0.3;
+    const blended = feedInterval * 0.7 + ageAvg * 0.3;
+
     // Clamp to safe range
     feedInterval = Math.max(safeMin, Math.min(safeMax, blended));
-    source = 'personalized';
   } else {
     feedInterval = (defaults.interval.min + defaults.interval.max) / 2;
     source = 'age-based';
@@ -177,16 +280,13 @@ export const predictRemainingFeeds = (birthDate, dailySchedules, defaultFeedDura
   // Determine feed duration (learn from data or use default)
   let feedDuration;
   if (personalDuration && personalDuration.count >= 3) {
-    feedDuration = personalDuration.average;
+    feedDuration = personalDuration.weighted; // Use weighted average
   } else {
     feedDuration = defaultFeedDuration;
   }
 
   // Find the most recent feed (today or yesterday)
   const lastFeed = getLastFeedTime(dailySchedules);
-
-  const now = new Date();
-  const currentHour = now.getHours() + now.getMinutes() / 60;
 
   let startFrom;
   if (lastFeed) {
@@ -203,6 +303,14 @@ export const predictRemainingFeeds = (birthDate, dailySchedules, defaultFeedDura
     startFrom = currentHour - feedInterval;
   }
 
+  // Calculate confidence score
+  const confidence = calculateConfidence({
+    dataPoints: personalInterval?.count || 0,
+    minRequired: 5,
+    values: personalInterval?.observations?.map(o => o.value) || [],
+    observations: personalInterval?.observations || []
+  });
+
   // Generate predictions for next 24 hours
   const predictions = [];
   let cursor = startFrom;
@@ -218,6 +326,22 @@ export const predictRemainingFeeds = (birthDate, dailySchedules, defaultFeedDura
 
     // Only include future predictions (with small buffer for "about to happen")
     if (nextFeedStart > currentHour - 0.25) {
+      // Adjust interval for day/night if we have the data
+      let adjustedInterval = feedInterval;
+      const predictedIsDaytime = isDaytime(nextFeedStart);
+
+      if (personalInterval) {
+        if (predictedIsDaytime && personalInterval.daytime && personalInterval.daytime.count >= 3) {
+          adjustedInterval = Math.max(safeMin, Math.min(safeMax,
+            personalInterval.daytime.weighted * 0.7 + (defaults.interval.min + defaults.interval.max) / 2 * 0.3
+          ));
+        } else if (!predictedIsDaytime && personalInterval.nighttime && personalInterval.nighttime.count >= 3) {
+          adjustedInterval = Math.max(safeMin, Math.min(safeMax,
+            personalInterval.nighttime.weighted * 0.7 + (defaults.interval.min + defaults.interval.max) / 2 * 0.3
+          ));
+        }
+      }
+
       predictions.push({
         id: `predicted-feed-${feedCount}`,
         type: 'feed',
@@ -225,11 +349,18 @@ export const predictRemainingFeeds = (birthDate, dailySchedules, defaultFeedDura
         endTime: nextFeedEnd,
         predicted: true,
         label: `Feed ~${formatHourToTime(nextFeedStart)}`,
-        source
+        source,
+        confidence: confidence.level,
+        isDaytime: predictedIsDaytime
       });
+
+      // Use adjusted interval for next iteration
+      cursor = nextFeedStart;
+      feedInterval = adjustedInterval;
+    } else {
+      cursor = nextFeedStart;
     }
 
-    cursor = nextFeedStart;
     feedCount++;
   }
 
@@ -238,12 +369,16 @@ export const predictRemainingFeeds = (birthDate, dailySchedules, defaultFeedDura
     feedInterval,
     source,
     ageDefaults: defaults,
-    personalStats: personalInterval
+    personalStats: personalInterval,
+    durationStats: personalDuration,
+    confidence,
+    trend: personalInterval?.trend || null
   };
 };
 
 /**
  * Predict next single feed (for quick display)
+ * Enhanced with confidence score
  */
 export const predictNextFeed = (birthDate, dailySchedules) => {
   const result = predictRemainingFeeds(birthDate, dailySchedules);
@@ -253,6 +388,7 @@ export const predictNextFeed = (birthDate, dailySchedules) => {
       predicted: null,
       feedInterval: result.feedInterval,
       source: result.source,
+      confidence: result.confidence,
       message: 'No more feeds predicted for today'
     };
   }
@@ -268,6 +404,8 @@ export const predictNextFeed = (birthDate, dailySchedules) => {
     feedInterval: result.feedInterval,
     minutesFromNow,
     source: result.source,
+    confidence: result.confidence,
+    trend: result.trend,
     message: `Next feed around ${formatHourToTime(next.startTime)} (~${minutesFromNow} min)`
   };
 };

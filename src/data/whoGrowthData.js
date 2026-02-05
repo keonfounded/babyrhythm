@@ -1,9 +1,23 @@
 /**
- * WHO Weight-for-Age Percentile Data (0-24 months)
+ * WHO Child Growth Standards - Weight-for-Age (0-24 months)
  * Values are in kilograms
- * Based on WHO Child Growth Standards
+ *
+ * Primary Source: World Health Organization (2006)
+ * WHO Child Growth Standards: Methods and development
+ *
+ * Official Data Tables:
+ * - Boys: https://cdn.who.int/media/docs/default-source/child-growth/child-growth-standards/indicators/weight-for-age/wfa-boys-0-5-percentiles.pdf
+ * - Girls: https://cdn.who.int/media/docs/default-source/child-growth/child-growth-standards/indicators/weight-for-age/wfa-girls-0-5-percentiles.pdf
+ * - Main Page: https://www.who.int/tools/child-growth-standards/standards/weight-for-age
+ *
+ * CDC recommends using WHO Growth Standards for children 0-2 years in the US:
+ * https://www.cdc.gov/growth-chart-training/hcp/using-growth-charts/who-using.html
+ *
+ * NOTE: The WHO standards are based on breastfed infants from 6 countries
+ * and represent how children SHOULD grow under optimal conditions.
  *
  * Data points at key ages (in days) for percentiles: 3rd, 15th, 50th, 85th, 97th
+ * Values verified against WHO official tables as of February 2025
  */
 
 // Boys weight-for-age (kg) at specific days

@@ -430,6 +430,31 @@ const ProfilePage = ({
         </div>
       </div>
 
+      {/* Medical Disclaimer */}
+      <div className="bg-amber-900/30 border border-amber-600/50 rounded-lg p-6 mt-6">
+        <h3 className="text-xl font-semibold text-amber-300 mb-4 flex items-center gap-2">
+          <AlertTriangle className="w-5 h-5" />
+          Medical Disclaimer
+        </h3>
+        <div className="text-amber-100/80 text-sm space-y-2">
+          <p>
+            <strong>BabyRhythm is an informational tool only.</strong> It is NOT a substitute for professional medical advice, diagnosis, or treatment.
+          </p>
+          <ul className="list-disc list-inside space-y-1 text-amber-100/70">
+            <li>Sleep and feed predictions are based on patterns and general guidelines, not medical expertise</li>
+            <li>Growth percentiles are screening tools, not diagnoses</li>
+            <li>Developmental milestones are general guidelines — individual children develop at their own pace</li>
+            <li>Prediction confidence scores are heuristic estimates, not scientifically validated</li>
+          </ul>
+          <p className="pt-2">
+            <strong>Always consult your pediatrician</strong> for any concerns about your baby's health, sleep, feeding, or development.
+          </p>
+          <p className="text-xs text-amber-100/50 pt-2">
+            Data sources: WHO Child Growth Standards, CDC Developmental Milestones (2022), AAP/AASM Sleep Guidelines, Cleveland Clinic.
+          </p>
+        </div>
+      </div>
+
       {/* Data Management */}
       <div className="bg-gray-800 rounded-lg p-6 mt-6">
         <h3 className="text-xl font-semibold text-red-400 mb-4 flex items-center gap-2">

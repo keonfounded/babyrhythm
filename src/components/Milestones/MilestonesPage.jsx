@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ChevronDown, ChevronRight, Plus, Trophy, Download } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { MILESTONE_CATEGORIES, MILESTONES } from '../../data/milestoneDefinitions';
 import { exportMilestonesToCSV } from '../../utils/csvExportHelpers';
 import { useMilestones } from '../../hooks/useMilestones';
@@ -7,6 +8,7 @@ import MilestoneItem from './MilestoneItem';
 import MilestoneModal from './MilestoneModal';
 
 const MilestonesPage = () => {
+  const { t } = useTranslation();
   const {
     customMilestones,
     isAchieved,
@@ -67,7 +69,7 @@ const MilestonesPage = () => {
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-3xl font-bold text-white flex items-center gap-3">
           <Trophy className="w-8 h-8 text-yellow-400" />
-          Milestones
+          {t('milestones.title')}
         </h2>
         <div className="flex gap-2">
           <button
@@ -86,6 +88,15 @@ const MilestonesPage = () => {
             Add Custom
           </button>
         </div>
+      </div>
+
+      {/* Disclaimer */}
+      <div className="bg-blue-900/20 border border-blue-500/30 rounded-lg p-4 mb-6">
+        <p className="text-sm text-blue-200/80 leading-relaxed">
+          <span className="font-medium text-blue-300">Milestones are general guidelines, not deadlines.</span>{' '}
+          Based on CDC 2022 guidelines (when 75% of children achieve them). Every child develops at their own pace.
+          If you have concerns, talk to your pediatrician.
+        </p>
       </div>
 
       {/* Overall Progress */}

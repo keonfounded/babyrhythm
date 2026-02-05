@@ -1,6 +1,20 @@
 /**
- * Predefined developmental milestones organized by category
- * Based on common pediatric developmental guidelines
+ * Developmental Milestones
+ *
+ * Primary Source: CDC "Learn the Signs. Act Early" (Updated 2022)
+ * URL: https://www.cdc.gov/act-early/milestones/index.html
+ *
+ * IMPORTANT NOTES:
+ * - Ages represent when MOST children (75%+) achieve the milestone (2022 CDC update)
+ * - The 2022 update shifted from 50th to 75th percentile for earlier identification of delays
+ * - Individual children develop at their own pace - these are guidelines, not deadlines
+ * - Some milestones (like crawling) are optional - many babies skip them entirely
+ * - Always consult a pediatrician if you have developmental concerns
+ *
+ * Changes from pre-2022 guidelines:
+ * - Rolling moved from 4 months to 6 months
+ * - Walking alone moved from 12 months to 15 months
+ * - Crawling removed as a required milestone (many babies skip it)
  */
 
 export const MILESTONE_CATEGORIES = {
@@ -36,65 +50,73 @@ export const MILESTONE_CATEGORIES = {
 
 export const MILESTONES = {
   // Motor Skills (0-24 months progression)
+  // Source: CDC Milestones 2022 - https://www.cdc.gov/act-early/milestones/index.html
   motor: [
-    { id: 'holds_head_up', label: 'Holds head up', typicalAge: '1-2 months' },
-    { id: 'pushes_up_on_arms', label: 'Pushes up on arms when on tummy', typicalAge: '2-3 months' },
-    { id: 'rolls_tummy_to_back', label: 'Rolls from tummy to back', typicalAge: '3-4 months' },
-    { id: 'rolls_back_to_tummy', label: 'Rolls from back to tummy', typicalAge: '4-5 months' },
-    { id: 'sits_with_support', label: 'Sits with support', typicalAge: '4-5 months' },
-    { id: 'sits_unsupported', label: 'Sits without support', typicalAge: '6-7 months' },
-    { id: 'crawls', label: 'Crawls', typicalAge: '7-10 months' },
-    { id: 'pulls_to_stand', label: 'Pulls to standing', typicalAge: '8-10 months' },
-    { id: 'cruises', label: 'Cruises along furniture', typicalAge: '9-12 months' },
-    { id: 'stands_alone', label: 'Stands alone briefly', typicalAge: '10-12 months' },
-    { id: 'first_steps', label: 'First steps', typicalAge: '11-14 months' },
-    { id: 'walks_well', label: 'Walks well', typicalAge: '12-15 months' },
-    { id: 'runs', label: 'Runs', typicalAge: '18-24 months' },
-    { id: 'climbs_stairs', label: 'Climbs stairs with help', typicalAge: '18-24 months' },
-    { id: 'kicks_ball', label: 'Kicks a ball', typicalAge: '18-24 months' }
+    { id: 'holds_head_up', label: 'Holds head up when on tummy', typicalAge: '2 months' },
+    { id: 'pushes_up_on_arms', label: 'Pushes up on arms when on tummy', typicalAge: '4 months' },
+    { id: 'pushes_up_straight_arms', label: 'Pushes up with straight arms when on tummy', typicalAge: '6 months' },
+    { id: 'rolls_over', label: 'Rolls over in both directions', typicalAge: '6 months' },
+    { id: 'sits_without_support', label: 'Sits without support', typicalAge: '9 months' },
+    { id: 'pulls_to_stand', label: 'Pulls to standing', typicalAge: '12 months' },
+    { id: 'crawls', label: 'Crawls (optional - some babies skip)', typicalAge: '9-12 months', optional: true },
+    { id: 'cruises', label: 'Walks holding onto furniture', typicalAge: '12 months' },
+    { id: 'first_steps', label: 'Takes a few steps on own', typicalAge: '15 months' },
+    { id: 'walks_well', label: 'Walks well independently', typicalAge: '18 months' },
+    { id: 'runs', label: 'Runs', typicalAge: '2 years' },
+    { id: 'climbs_stairs', label: 'Walks up stairs with help', typicalAge: '18 months' },
+    { id: 'kicks_ball', label: 'Kicks a ball', typicalAge: '2 years' }
   ],
 
   // Social & Emotional
+  // Source: CDC Milestones 2022
   social: [
-    { id: 'first_smile', label: 'First social smile', typicalAge: '6-8 weeks' },
-    { id: 'laughs', label: 'Laughs out loud', typicalAge: '3-4 months' },
-    { id: 'recognizes_parents', label: 'Recognizes parents', typicalAge: '3-4 months' },
-    { id: 'enjoys_peek_a_boo', label: 'Enjoys peek-a-boo', typicalAge: '6-9 months' },
-    { id: 'stranger_anxiety', label: 'Shows stranger anxiety', typicalAge: '6-9 months' },
-    { id: 'waves_bye', label: 'Waves bye-bye', typicalAge: '9-12 months' },
-    { id: 'shows_affection', label: 'Shows affection to familiar people', typicalAge: '12-18 months' },
-    { id: 'plays_pretend', label: 'Plays simple pretend games', typicalAge: '18-24 months' },
-    { id: 'parallel_play', label: 'Plays alongside other children', typicalAge: '18-24 months' },
-    { id: 'shows_defiance', label: 'Shows independence/defiance', typicalAge: '18-24 months' }
+    { id: 'calms_when_spoken_to', label: 'Calms down when spoken to or picked up', typicalAge: '2 months' },
+    { id: 'first_smile', label: 'Smiles at people', typicalAge: '2 months' },
+    { id: 'laughs', label: 'Laughs out loud', typicalAge: '4 months' },
+    { id: 'looks_at_self', label: 'Likes to look at self in mirror', typicalAge: '6 months' },
+    { id: 'stranger_anxiety', label: 'May be afraid of strangers', typicalAge: '9 months' },
+    { id: 'has_favorite_things', label: 'Has favorite toys and people', typicalAge: '9 months' },
+    { id: 'waves_bye', label: 'Waves bye-bye', typicalAge: '12 months' },
+    { id: 'plays_games', label: 'Plays games like pat-a-cake', typicalAge: '12 months' },
+    { id: 'shows_affection', label: 'Shows affection to familiar people', typicalAge: '15 months' },
+    { id: 'plays_pretend', label: 'Plays simple pretend (feeds doll)', typicalAge: '18 months' },
+    { id: 'parallel_play', label: 'Notices other children and joins them', typicalAge: '2 years' },
+    { id: 'shows_defiance', label: 'Shows defiant behavior', typicalAge: '2 years' }
   ],
 
   // Language & Communication
+  // Source: CDC Milestones 2022
   language: [
-    { id: 'coos', label: 'Coos and makes sounds', typicalAge: '2-3 months' },
-    { id: 'babbles', label: 'Babbles (ba-ba, da-da)', typicalAge: '4-6 months' },
-    { id: 'responds_to_name', label: 'Responds to name', typicalAge: '6-9 months' },
-    { id: 'understands_no', label: 'Understands "no"', typicalAge: '9-12 months' },
-    { id: 'first_word', label: 'First word (besides mama/dada)', typicalAge: '10-14 months' },
-    { id: 'mama_dada', label: 'Says "mama" or "dada" with meaning', typicalAge: '10-14 months' },
-    { id: 'points_at_things', label: 'Points at things', typicalAge: '12-14 months' },
-    { id: 'follows_simple_commands', label: 'Follows simple commands', typicalAge: '12-18 months' },
-    { id: 'says_several_words', label: 'Says 5+ words', typicalAge: '15-18 months' },
-    { id: 'two_word_phrases', label: 'Two-word phrases', typicalAge: '18-24 months' },
-    { id: 'knows_body_parts', label: 'Points to body parts', typicalAge: '18-24 months' }
+    { id: 'coos', label: 'Coos and makes sounds', typicalAge: '2 months' },
+    { id: 'babbles', label: 'Babbles (strings of sounds)', typicalAge: '6 months' },
+    { id: 'responds_to_name', label: 'Responds to own name', typicalAge: '9 months' },
+    { id: 'understands_no', label: 'Understands "no"', typicalAge: '9 months' },
+    { id: 'mama_dada', label: 'Says "mama" or "dada"', typicalAge: '12 months' },
+    { id: 'simple_gestures', label: 'Uses simple gestures (shaking head no)', typicalAge: '12 months' },
+    { id: 'tries_to_say_words', label: 'Tries to say 1-2 words besides mama/dada', typicalAge: '15 months' },
+    { id: 'points_to_show', label: 'Points to show you something', typicalAge: '15 months' },
+    { id: 'says_several_words', label: 'Says at least 3 words', typicalAge: '18 months' },
+    { id: 'follows_simple_commands', label: 'Follows 1-step directions without gestures', typicalAge: '18 months' },
+    { id: 'two_word_phrases', label: 'Says at least 2 words together', typicalAge: '2 years' },
+    { id: 'points_in_book', label: 'Points to things in a book when asked', typicalAge: '2 years' },
+    { id: 'knows_body_parts', label: 'Points to at least 2 body parts', typicalAge: '2 years' }
   ],
 
   // Cognitive
+  // Source: CDC Milestones 2022
   cognitive: [
-    { id: 'tracks_objects', label: 'Tracks moving objects with eyes', typicalAge: '1-2 months' },
-    { id: 'reaches_for_objects', label: 'Reaches for objects', typicalAge: '3-4 months' },
-    { id: 'transfers_objects', label: 'Transfers objects between hands', typicalAge: '5-6 months' },
-    { id: 'object_permanence', label: 'Understands object permanence', typicalAge: '8-12 months' },
-    { id: 'finds_hidden_objects', label: 'Finds hidden objects', typicalAge: '8-12 months' },
-    { id: 'uses_objects_correctly', label: 'Uses objects correctly (phone, cup)', typicalAge: '12-18 months' },
-    { id: 'stacks_blocks', label: 'Stacks 2-3 blocks', typicalAge: '12-18 months' },
-    { id: 'scribbles', label: 'Scribbles with crayon', typicalAge: '12-18 months' },
-    { id: 'sorts_shapes', label: 'Sorts shapes and colors', typicalAge: '18-24 months' },
-    { id: 'completes_simple_puzzles', label: 'Completes simple puzzles', typicalAge: '18-24 months' }
+    { id: 'watches_you', label: 'Watches you as you move', typicalAge: '2 months' },
+    { id: 'looks_at_toy', label: 'Looks at a toy for several seconds', typicalAge: '2 months' },
+    { id: 'reaches_for_toy', label: 'Reaches for a toy they want', typicalAge: '4 months' },
+    { id: 'puts_things_in_mouth', label: 'Puts things in mouth to explore', typicalAge: '6 months' },
+    { id: 'looks_for_dropped', label: 'Looks for objects when dropped out of sight', typicalAge: '9 months' },
+    { id: 'bangs_two_things', label: 'Bangs two things together', typicalAge: '9 months' },
+    { id: 'follows_simple_directions', label: 'Follows simple directions', typicalAge: '12 months' },
+    { id: 'uses_things_correctly', label: 'Uses things correctly (phone, cup)', typicalAge: '15 months' },
+    { id: 'stacks_blocks', label: 'Stacks at least 2 small objects', typicalAge: '18 months' },
+    { id: 'copies_you', label: 'Copies you doing chores', typicalAge: '18 months' },
+    { id: 'plays_with_more_than_one_toy', label: 'Plays with more than one toy at a time', typicalAge: '2 years' },
+    { id: 'kicks_ball_forward', label: 'Kicks a ball', typicalAge: '2 years' }
   ]
 };
 
