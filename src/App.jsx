@@ -57,6 +57,13 @@ const BabyRhythm = () => {
   // Theme
   const { theme, toggleTheme } = useTheme();
 
+  // Check if in demo mode
+  const isDemo = (() => {
+    try {
+      return localStorage.getItem('babyRhythm_isDemo') === 'true';
+    } catch { return false; }
+  })();
+
   // Tutorial state
   const [showTutorial, setShowTutorial] = useState(() => {
     try {
@@ -478,7 +485,28 @@ const exportData = () => {
   // MAIN RENDER
   return (
     <div className="min-h-screen bg-gray-900 text-gray-100 p-4 md:p-8">
-      <div className="max-w-7xl mx-auto">
+      {/* Demo Mode Banner */}
+      {isDemo && (
+        <div className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-amber-500 to-orange-500 text-white px-4 py-2 shadow-lg">
+          <div className="max-w-7xl mx-auto flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <span className="text-lg">🎮</span>
+              <span className="font-medium text-sm md:text-base">Demo Mode</span>
+              <span className="hidden sm:inline text-sm opacity-90">- Viewing sample data</span>
+            </div>
+            <button
+              onClick={resetAllData}
+              className="px-3 py-1 bg-white/20 hover:bg-white/30 rounded-lg text-sm font-medium transition-colors flex items-center gap-1"
+            >
+              <X className="w-4 h-4" />
+              <span className="hidden sm:inline">Exit Demo</span>
+              <span className="sm:hidden">Exit</span>
+            </button>
+          </div>
+        </div>
+      )}
+
+      <div className={`max-w-7xl mx-auto ${isDemo ? 'pt-12' : ''}`}>
 
         {/* Header - responsive */}
         <div className="mb-6 md:mb-8">
