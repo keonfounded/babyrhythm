@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
-import { User, Calendar, Save, X, Plus, Trash2, Download, Globe, AlertTriangle, RefreshCw, HelpCircle, Sun, Moon } from 'lucide-react';
+import { User, Calendar, Save, X, Plus, Trash2, Download, Globe, AlertTriangle, RefreshCw, HelpCircle, Sun, Moon, MessageSquare } from 'lucide-react';
+
+// Replace with your Google Form URL
+const FEEDBACK_FORM_URL = 'https://forms.gle/YOUR_FORM_ID_HERE';
 import { useTranslation } from 'react-i18next';
 import { calculateAge } from '../../utils/dateHelpers';
 import { exportWeightHistoryToCSV } from '../../utils/csvExportHelpers';
@@ -406,13 +409,24 @@ const ProfilePage = ({
             <label className="block text-sm font-medium text-gray-300 mb-2">
               Help
             </label>
-            <button
-              onClick={showTutorial}
-              className="flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-gray-300 rounded-lg transition-colors"
-            >
-              <HelpCircle className="w-4 h-4" />
-              Show Tutorial
-            </button>
+            <div className="flex flex-wrap gap-2">
+              <button
+                onClick={showTutorial}
+                className="flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-gray-300 rounded-lg transition-colors"
+              >
+                <HelpCircle className="w-4 h-4" />
+                Show Tutorial
+              </button>
+              <a
+                href={FEEDBACK_FORM_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 px-4 py-2 bg-teal-600 hover:bg-teal-500 text-white rounded-lg transition-colors"
+              >
+                <MessageSquare className="w-4 h-4" />
+                Send Feedback
+              </a>
+            </div>
           </div>
         </div>
       </div>
